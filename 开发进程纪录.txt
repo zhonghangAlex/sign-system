@@ -1,0 +1,10 @@
+2018.2.25
+1.对首页回车提交表单进行完善（button原生native修改）
+2.对main部分的背景颜色进行调试，white色底效果不好（ipmag文件.container，super文件.out-main，.content-container,.container）且还原
+3.修正“登陆”错别字
+4.对aside导航部分进行修改，修正blur时选择效果消失的问题，调试其背景色于main色一致，效果可观，同时加box-shadow，突出视图层效果
+2018.2.26
+1.element ui添加upload demo和后端对接，初步联通，但是还有很多问题
+2.解决了二次登陆的问题
+2018.2.28
+1.表格初始化完成，分页完成

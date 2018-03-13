@@ -1,0 +1,54 @@
+/*登陆界面login输入框*/
+.account-input .el-input__inner{
+padding: 0 35px;
+}
+.checkpass-input .el-input__inner{
+padding: 0 35px;
+}
+.login-container .el-form-item.is-success .el-input__inner, .el-form-item.is-success .el-input__inner:focus, .el-form-item.is-success .el-textarea__inner, .el-form-item.is-success .el-textarea__inner:focus {
+    
+    border-color: #658aac;
+}
+.login-container .el-form-item.is-success .el-input__validateIcon {
+    background: #658aac;
+    color: #658aac;
+}
+
+/*Super;Ord 面包屑字体*/
+.breadcrumb-inner .el-breadcrumb__inner{
+    cursor: pointer;
+    color: #658aac;
+}
+.breadcrumb-inner .el-breadcrumb__inner:hover{
+    cursor: pointer;
+    color: #658aac;
+}
+.breadcrumb-inner .el-breadcrumb__item:last-child .el-breadcrumb__inner{
+    cursor: pointer;
+    color: #658aac;
+    font-weight: 1000;
+}
+.breadcrumb-inner .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover{
+    color: #658aac;
+    font-weight: 1000;
+}
+.breadcrumb-inner .el-breadcrumb__separator{
+    font-family: "宋体";
+    color: #658aac;
+}
+
+/*table 分页器*/
+.pagebtn .el-pagination__total{
+    color:white;
+}
+.pagebtn .el-pagination__jump{
+    color:white;
+}
+
+/*ord 新建签到的样式修改*/
+.sign_op .el-switch__label{
+    color: white;
+  }
+.sign_op .el-switch__label.is-active{
+    color:white;
+}
