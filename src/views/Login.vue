@@ -70,6 +70,10 @@ export default {
           //post 方法请求数据
           var loginParams = { id: this.ruleForm.account, password: this.ruleForm.checkPass };//对象格式
           var params = new URLSearchParams()
+          var para = {
+            id: this.ruleForm.account,
+            password: this.ruleForm.checkPass
+          }
           params.append('id',this.ruleForm.account)
           params.append('password',this.ruleForm.checkPass)
           axios.post('http://120.79.12.163/login',params)

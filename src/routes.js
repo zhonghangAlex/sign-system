@@ -90,6 +90,10 @@ export default new Router({
         path: '*',
         hidden: true,
         redirect: { path: '/404' }
+    },
+    {
+        path: '/Bmap',
+        component : resolve => require(['./views/ordadmin-view/Bmap.vue'],resolve)
     }
   ]
 })

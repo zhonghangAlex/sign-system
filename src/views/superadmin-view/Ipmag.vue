@@ -54,6 +54,8 @@
 			</el-table-column>
 			<el-table-column prop="ip" label="IP地址" min-width="100" align="center" sortable>
 			</el-table-column>
+			<el-table-column prop="bssid" label="BSSID" min-width="100" align="center" sortable>
+			</el-table-column>
 			<el-table-column prop="x" label="经度" min-width="120" align="center" sortable>
 			</el-table-column>
 			<el-table-column prop="y" label="纬度" min-width="120" align="center" sortable>
@@ -91,6 +93,9 @@
 				<el-form-item label="IP地址">
 					<el-input v-model="editForm.ip" style="width:400px;"></el-input>
 				</el-form-item>
+				<el-form-item label="BSSID">
+					<el-input v-model="editForm.bssid" style="width:400px;"></el-input>
+				</el-form-item>
 				<el-form-item label="经度">
 					<el-input v-model="editForm.x" style="width:400px;"></el-input>
 				</el-form-item>
@@ -122,6 +127,9 @@
 				</el-form-item>
 				<el-form-item label="IP地址" style="width:400px;">
 					<el-input  v-model="addForm.ip"></el-input>
+				</el-form-item>
+				<el-form-item label="BSSID" style="width:400px;">
+					<el-input  v-model="addForm.bssid"></el-input>
 				</el-form-item>
 				<el-form-item label="经度" style="width:400px;">
 					<el-input  v-model="addForm.x"></el-input>
@@ -202,6 +210,7 @@
 				editForm: {
 					id:'',
 					ip: '',
+					bassid:'',
 					room:'',
 					x:'',
 					y:'',
@@ -242,6 +251,7 @@
 				addForm: {
 					id:'',
 					ip: '',
+					bassid:'',
 					room:'',
 					x:'',
 					y:'',
@@ -441,6 +451,7 @@
 				this.addForm = {
 					id:'',
 					ip: '',
+					bssid:'',
 					room:'',
 					x:'',
 					y:'',

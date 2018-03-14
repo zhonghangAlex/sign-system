@@ -44,6 +44,8 @@
 			</el-table-column>
 			<el-table-column prop="signno" label="签到域编号" min-width="120" align="center" sortable>
 			</el-table-column>
+			<el-table-column prop="stucount" label="学生数" min-width="120" align="center" sortable>
+			</el-table-column>
 			<el-table-column prop="workid" label="管理员工号" min-width="120" align="center" sortable>
 			</el-table-column>
 			<el-table-column prop="estabtime" label="签到域创建时间" min-width="200" align="center" sortable>
