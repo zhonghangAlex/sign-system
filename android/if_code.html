@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .container{
+            background: url(./img/phone_bg.png);
+            background-size: cover;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        .main{
+            width: 90%;
+            height: 90%;
+            top: 5%;
+            left: 5%;
+            position: relative;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0px 20px 60px 0px #333;
+        }
+        .sign_code{
+            width: 60%;
+            padding: 5px 20px 5px 35px;
+            height: 50px;
+            background: #fff;
+            position: relative;
+            border-radius: 100px;
+            border: 3px solid #808080;
+            font-size: 20px;
+            margin-top: 20%;
+            margin-bottom: 20px;
+            box-shadow: 0px 0px 30px 0px #808080;
+        }
+        .code_submit{
+            margin-top:16%;
+            width: 70%;
+            height: 50px;
+            background: #4287c5;
+            border:2px solid #4287c5;
+            box-shadow: 0px 0px 20px 0px #444;
+            color: white;
+            font-size: 20px;
+            font-weight: 2000;
+            border-radius: 15px;
+            position: relative;
+        }
+        .input_key_div{
+            width: 80%;
+            height: 45%;
+            left: 10%;
+            position: relative;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        .input_key{
+            width: 25%;
+            margin: 6px;
+            height: 25%;
+            position: relative;
+            font-size: 20px;
+            border-radius: 50%;
+            list-style-type:none;
+            background: #c5c5c5;
+            color:black;
+            box-shadow: 0px 0px 20px 0px #444;
+            border: none;
+        }
+        button:focus{
+          outline: none;
+        }
+        .key_container{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main">
+            <center>
+                <input type="text" placeholder="请输入多位签到密令" class="sign_code" readonly="readonly" />
+            </center>
+            <div class="input_key_div">
+                <center>
+                    <div class="key_container">
+                        <button class="input_key">1</button>
+                        <button class="input_key">2</button>
+                        <button class="input_key">3</button>
+                        <button class="input_key">4</button>
+                        <button class="input_key">5</button>
+                        <button class="input_key">6</button>
+                        <button class="input_key">7</button>
+                        <button class="input_key">8</button>
+                        <button class="input_key">9</button>
+                        <button class="input_key">重置</button>
+                        <button class="input_key">0</button>
+                        <button class="input_key">删除</button>
+                    </div>
+                </center>
+            </div>
+            <center>
+                <button type="submit"  class="code_submit">确认提交</button>
+            </center>
+        </div>
+    </div>
+</body>
+</html>

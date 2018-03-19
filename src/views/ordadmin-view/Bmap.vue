@@ -1,5 +1,15 @@
 <template>
-    <div id="allmap" class="allmap"></div>
+    <center>
+        <form>
+            <div style=" margin:auto;width:95%;height:500px;border:2px solid gray; margin-bottom:10px;" id="container"></div>
+            <h3 style="color: red;">介绍：输入地点然后点击“地图查找”搜索，再点击地图地点获取相应经纬度</h3>
+            <label>输入地点：</label>
+            <input id="where" name="where" type="text" placeholder="请输入地址">
+            <input id="but" type="button" value="地图查找" onClick="sear(document.getElementById('where').value);" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 经度：
+            <input id="lonlat" name="lonlat" type="number" maxlength="10">纬度：
+            <input id="lonlat2" name="lonlat2" type="number" maxlength="9">
+        </form>
+    </center>
 </template>
 
 <script>
@@ -15,67 +25,67 @@ export default {
   },
   methods: {
     ready: function startmap() {
-      //创建地图
-      var map = new BMap.Map("allmap");
-      //创建一个圆
-      var circle = new BMap.Circle(new BMap.Point(114.339972,30.517935),100,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
-
-      var point2s = [
-          new BMap.Point(114.341625,30.517647),
-          new BMap.Point(114.341068,30.517741),
-          new BMap.Point(114.338921,30.518098),
-          new BMap.Point(114.340538,30.518643),
-          new BMap.Point(114.340996,30.517064),
-          new BMap.Point(114.337151,30.517344),
-          new BMap.Point(114.339954,30.517927)
-
-      ];
-      //创建标注点并添加到地图中
-      function addMarker(points) {
-          //循环建立标注点
-          for(var i=0, pointsLen = points.length; i<pointsLen; i++) {
-              var marker = new BMap.Marker(points[i]); //将点转化成标注点
-              map.addOverlay(marker);  //将标注点添加到地图上
-              //添加监听事件
-              (function() {
-                  var thePoint = points[i];
-                  marker.addEventListener("click",
-                          function() {
-                              showInfo(this,thePoint);
-                          });
-              })();
-          }
-      }
-
-      function showInfo(thisMarker,point) {
-
-          //判断点是否在
-          if(BMapLib.GeoUtils.isPointInCircle(point,circle)){
-              var infoWindow = new BMap.InfoWindow("在圆形区域内");
-              thisMarker.openInfoWindow(infoWindow); //图片加载完后重绘infoWindow
-          }else
-          {
-              var infoWindow = new BMap.InfoWindow("不在圆形区域内");
-              thisMarker.openInfoWindow(infoWindow); //图片加载完后重绘infoWindow
-          }
-      }
-
-
-      function initialize() {
-          // 百度地图API功能
-          map.addControl(new BMap.NavigationControl());               // 添加平移缩放控件
-          map.addControl(new BMap.ScaleControl());                    // 添加比例尺控件
-          map.addControl(new BMap.OverviewMapControl());              //添加缩略地图控件
-          map.enableScrollWheelZoom();                            //启用滚轮放大缩小
-          map.addControl(new BMap.MapTypeControl());          //添加地图类型控件
-
-          var point = new BMap.Point(114.339972,30.517935);    // 创建点坐标
-          map.centerAndZoom(point,18);                      // 初始化地图,设置中心点坐标和地图级别。
-          addMarker(point2s);
-          map.addOverlay(circle);
-      }
-
-      initialize();
+    var longitude=114.339972;
+    var latitude=30.517935;
+   
+    var map = new BMap.Map("container",{enableMapClick: false});
+    map.setDefaultCursor("crosshair");
+    map.enableScrollWheelZoom();
+    var point = new BMap.Point(longitude,latitude);
+    map.centerAndZoom(point, 13);
+    var gc = new BMap.Geocoder();
+    //map.addControl(new BMap.NavigationControl());  // 添加平移缩放控件
+    //map.addControl(new BMap.OverviewMapControl()); //添加缩略地图控件
+    //map.addControl(new BMap.ScaleControl()); // 添加比例尺控件
+    //map.addControl(new BMap.MapTypeControl()); //添加地图类型控件
+    //map.addControl(new BMap.CopyrightControl());
+    var marker = new BMap.Marker(point);
+    map.addOverlay(marker);
+    marker.addEventListener("click",
+    function(e) {
+        document.getElementById("lonlat").value = e.point.lng;
+        document.getElementById("lonlat2").value = e.point.lat;
+    });
+    marker.enableDragging();
+    marker.addEventListener("dragend",
+    function(e) {
+        gc.getLocation(e.point,
+        function(rs) {
+        showLocationInfo(e.point, rs);
+        });
+    });
+    function showLocationInfo(pt, rs) {
+        var opts = {
+        width: 250,
+        height: 150,
+        title: "当前位置"
+        };
+        var addComp = rs.addressComponents;
+        var addr = "当前位置：" + addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber + "<br/>";
+        addr += "纬度: " + pt.lat + ", " + "经度：" + pt.lng;
+        var infoWindow = new BMap.InfoWindow(addr, opts);
+        marker.openInfoWindow(infoWindow);
+    }
+    map.addEventListener("click",
+    function(e) {
+        document.getElementById("lonlat").value = e.point.lng;
+        document.getElementById("lonlat2").value = e.point.lat;
+    });
+    var traffic = new BMap.TrafficLayer();
+    map.addTileLayer(traffic);
+    function iploac(result) {
+        var cityName = result.name;
+    }
+    var myCity = new BMap.LocalCity();
+    myCity.get(iploac);
+    function sear(result) {
+        var local = new BMap.LocalSearch(map, {
+            renderOptions: {
+                map: map
+            }
+        });
+        local.search(result);
+    }
     }
   },
   mounted(){
@@ -87,20 +97,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    .gps_dia .allmap {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        overflow: hidden;
-        position: absolute;
-        font-family:"微软雅黑";
-        z-index: 1000000;
-    }
-    .BMap_cpyCtrl {
-        display: none;
-    }
-
-    .anchorBL {
-        display: none;
-    }
+    
 </style>

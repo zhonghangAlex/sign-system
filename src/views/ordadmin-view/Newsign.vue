@@ -89,9 +89,7 @@
               第五步：GPS范围确定
             </span>
             <div class="gps_container">
-              <div class="gps_circle" @click="handleGPS()">
-
-              </div>
+              <div class="gps_circle" @click="handleGPS()"></div>
             </div>
           </div>
           <div class="swiper-slide swiper-no-swiping">
@@ -109,8 +107,9 @@
     <el-dialog title="GPS范围选定" width="80%" :visible.sync ="GPSmapVisible" :close-on-click-modal="false" class="gps_dia" >
       <Bmap class="bmap"></Bmap>
       <div slot="footer" class="dialog-footer">
-        <el-button @click.native="GPSmapVisible = false">取消</el-button>
-        <el-button type="primary" @click.native="GPSmapVisible = false">完成</el-button>
+        <el-button @click.native="GPSmapVisible = false" class="cancel">取消</el-button>
+        <el-button type="primary" @click.native="GPSmapVisible = false" class="submit">完成</el-button>
+        
       </div>
     </el-dialog>
   </div>
@@ -374,14 +373,25 @@ export default {
       border:5px solid #658aac;
       cursor: pointer;
     }
+    
 
-    /*地图初始化*/
+    /*地图初始化
     .bmap{
-      width: 500px;
-      height: 500px;
+    }
+    .gps_dia .gps_footer .cancel{
+      right: 135px;
       position: absolute;
     }
-
+    .gps_dia .gps_footer .submit{
+      right: 50px;
+      position: absolute;
+    }
+    .gps_dia .gps_footer .message{
+      left: 50px;
+      position: absolute;
+      color: red;
+    }
+    */
     
     
 </style>

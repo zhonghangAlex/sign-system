@@ -52,3 +52,28 @@ padding: 0 35px;
 .sign_op .el-switch__label.is-active{
     color:white;
 }
+
+/*ord 发布新签到中百度地图的修改
+.gps_dia .allmap {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    position: absolute;
+    font-family:"微软雅黑";
+    z-index: 1000000;
+}
+
+*/
+.BMap_cpyCtrl {
+    display: none;
+}
+.anchorBL {
+    display: none;
+}
+.gps_dia .el-dialog{
+  }
+.gps_dia .footer{
+    bottom: 20px;
+    position: absolute;
+}
