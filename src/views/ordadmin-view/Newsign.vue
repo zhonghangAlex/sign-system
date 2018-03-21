@@ -117,7 +117,7 @@
   
 </template>
 
-<script>
+<script language="javascript">
 import Swiper from '../../../static/js/swiper' 
 import '../../../static/css/swiper.css'
 import GeoUtils from '../../../static/js/GeoUtils.js'
@@ -197,6 +197,10 @@ export default {
         modifier: 2,
         slideShadows : false
       },
+      onSlideChangeEnd : function(swiper) {
+            alert(swiper.activeIndex);
+            
+        },
       
       effect : 'coverflow',//切换效果
       slidesPerView: 3,//同时显示页数

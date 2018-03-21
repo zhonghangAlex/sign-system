@@ -79,11 +79,15 @@
             color:white;
         }
         .fail_message{
-            margin-top: 150%;
             position: absolute;
-            width: 100%;
+            width: 200px;
             text-align: center;
-
+            top: 80%;
+            left: 50%;
+            margin-left: -100px;
+            color: #f56c6c;
+            display:none;
+            font-size: 20px;
         }
     </style>
     
@@ -94,7 +98,7 @@
             <div class="status_cir">
                 <input id="sign_status" type="button" value="签到成功" class="success_status" />
             </div>
-            <span id="fail_message" class="fail_message">您的mac地址错误</span>
+            <span id="fail_message" class="fail_message" id="fail_message">您的mac地址错误</span>
             
         </div>
     </div>
@@ -103,13 +107,20 @@
 <script>
     function check_status(status,message){
         var oInput_status = document.getElementById('sign_status');
+        var fail_message = document.getElementById('fail_message');
+     
         if(status == 0){
             oInput_status.className = 'fail_status';
             oInput_status.value = '签到失败'
+            fail_message.style.display = 'block';
+            fail_message.innerHTML = message;
+
         }
         else{
             oInput_status.className = 'success_status';
             oInput_status.value = '签到成功'
+            fail_message.style.display = 'none';
         }
     };
+    check_status(1,"密码不对");
 </script>

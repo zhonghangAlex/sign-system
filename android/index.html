@@ -1,35 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-{%load staticfiles%}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=UXMuTlGi9TQBAvi0WwEjjqUXk5nih8Iq"></script>
+    <script type="text/javascript" src="./js/swiper.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/swiper.css">
     <style>
         *{
             margin: 0;
             padding: 0;
         }
-        .container{
-            background: url({% static 'mobile/phone/img/phone_bg.png' %});
+        .swiper-container{
+            background:url(./img/phone_bg.png);
             background-size: cover;
             width: 100%;
             height: 100%;
             position: absolute;
             left: 0;
             top: 0;
-        }
-        .main{
-            width: 80%;
-            height: 80%;
-            top: 5%;
-            left:10%;
-            position: relative;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0px 20px 60px 0px #333;
         }
         .message{
             position: absolute;
@@ -75,8 +66,8 @@
             left: 5%;
             background:white;
             position: absolute;
-            height: 45%;
-            top: 50%;
+            height: 42%;
+            top: 42%;
             border-radius: 20px;
             box-shadow: 0px 0px 20px 0px #444;
 
@@ -89,57 +80,125 @@
             display: none;  
         } 
         .submit{
-            width: 100px;
             position: absolute;
+            width: 40%;
             border: none;
+            bottom:3%;
             box-shadow: 0px 0px 10px 0px #444;
-            bottom: 0px;
             padding: 10px 10px 10px 10px;
             border-radius: 5px;
+            left:30%;
+        }
+        .swiper-wrapper{
+            width: 100%;
+            left: 0;
+            position: relative;
+        }
+        .swiper-slide{
+            left: -10%;
+            margin-left: 20%;
+            position: relative;
+            width:80% !important; 
+            height: 82%;
+            top: 5%;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0px 0px 30px 0px #333;
+        }
+        .swiper-container element.style{
+            width:80%;
+            position: relative;
         }
 
     </style>
 </head>
 <body>
-    <div class="container">
-        {% for i in nowsign %}
-        <div class="main">
-            <div class="message">
-                <span class="title_time message_txt">事件信息:</span>
-                <span class="txt_strat message_txt" >&nbsp;&nbsp;&nbsp;开始时间：{{i.starttime|date:"Y-m-d h:i:s"}}</span>
-                <span class="txt_end message_txt">&nbsp;&nbsp;&nbsp;结束时间：{{i.endtime|date:"Y-m-d h:i:s"}}</span>
-                <span class="promulgator message_txt">&nbsp;&nbsp;&nbsp;发布者：{{i.groupname}}</span>
-                <span class="place message_txt">&nbsp;&nbsp;&nbsp;地点：{{i.place}} {{i.room}}</span>
-                
+    <div class="container swiper-container">
+        <div class="swiper-wrapper" id="wrapper">
+            <div style="width:80%" class="swiper-slide">
+                <div class="message">
+                    <span class="title_time message_txt">事件信息:</span>
+                    <span class="txt_strat message_txt" >&nbsp;&nbsp;&nbsp;开始时间：{{i.starttime|date:"Y-m-d h:i:s"}}</span>
+                    <span class="txt_end message_txt">&nbsp;&nbsp;&nbsp;结束时间：{{i.endtime|date:"Y-m-d h:i:s"}}</span>
+                    <span class="promulgator message_txt">&nbsp;&nbsp;&nbsp;签到域：{{i.groupname}}</span>
+                    <span class="place message_txt">&nbsp;&nbsp;&nbsp;地点：{{i.place}} {{i.room}}</span>
+                </div>
+                <div class="small_map">
+                    <div class="allmap" style=" margin:auto;width:100%;height:100%;border-radius:20px;" id="allmap"></div>
+                </div>
+                <!--
+                <input type="text" placeholder="请输入多位签到密令" class="sign_code" />
+                <button type="submit"  class="code_submit">确认提交</button>
+                -->
+    
+                <button class="submit" onclick="">点击进行签到</button>
             </div>
-            <div class="small_map">
-                <div class="allmap" style=" margin:auto;width:100%;height:100%;border-radius:20px;" id="allmap"></div>
+            <div style="width:80%" class="swiper-slide">
+                <div class="message">
+                    <span class="title_time message_txt">事件信息:</span>
+                    <span class="txt_strat message_txt" >&nbsp;&nbsp;&nbsp;开始时间：{{i.starttime|date:"Y-m-d h:i:s"}}</span>
+                    <span class="txt_end message_txt">&nbsp;&nbsp;&nbsp;结束时间：{{i.endtime|date:"Y-m-d h:i:s"}}</span>
+                    <span class="promulgator message_txt">&nbsp;&nbsp;&nbsp;签到域：{{i.groupname}}</span>
+                    <span class="place message_txt">&nbsp;&nbsp;&nbsp;地点：{{i.place}} {{i.room}}</span>
+                </div>
+                <div class="small_map">
+                    <div class="allmap" style=" margin:auto;width:100%;height:100%;border-radius:20px;" id="allmap1"></div>
+                </div>
+                <!--
+                <input type="text" placeholder="请输入多位签到密令" class="sign_code" />
+                <button type="submit"  class="code_submit">确认提交</button>
+                -->
+    
+                <button class="submit" onclick="">点击进行签到</button>
             </div>
-            <!--
-            <input type="text" placeholder="请输入多位签到密令" class="sign_code" />
-            <button type="submit"  class="code_submit">确认提交</button>
-            -->
+            <div style="width:80%" class="swiper-slide">
+                <div class="message">
+                    <span class="title_time message_txt">事件信息:</span>
+                    <span class="txt_strat message_txt" >&nbsp;&nbsp;&nbsp;开始时间：{{i.starttime|date:"Y-m-d h:i:s"}}</span>
+                    <span class="txt_end message_txt">&nbsp;&nbsp;&nbsp;结束时间：{{i.endtime|date:"Y-m-d h:i:s"}}</span>
+                    <span class="promulgator message_txt">&nbsp;&nbsp;&nbsp;签到域：{{i.groupname}}</span>
+                    <span class="place message_txt">&nbsp;&nbsp;&nbsp;地点：{{i.place}} {{i.room}}</span>
+                </div>
+                <div class="small_map">
+                    <div class="allmap" style=" margin:auto;width:100%;height:100%;border-radius:20px;" id="allmap2"></div>
+                </div>
+                <!--
+                <input type="text" placeholder="请输入多位签到密令" class="sign_code" />
+                <button type="submit"  class="code_submit">确认提交</button>
+                -->
+    
+                <button class="submit" onclick="">点击进行签到</button>
+            </div>
         </div>
-        <center>
-            <button class="submit" onclick="window.location.href= './stugps?signid='">点击进行签到</button>
-        </center>
-        {% endfor %}
     </div>
 
 </body>
 </html>
 <script type="text/javascript">
+    //地图加载批量获取
+    var child_slide = document.getElementById('wrapper').getElementsByTagName('div');
+    //轮播器初始化
+    var mySwiper = new Swiper ('.swiper-container', {
+    // 水平显示
+    direction: 'horizontal',
+    loop: false
+    })
+    //主要是这部分
+    initmap("allmap",114.3,30.5,100,114.3,30.5);//初始化第一页的内容
+    mySwiper.on('slideChangeTransitionEnd', function () {//滑动事件监听
+        var mapindexload = mySwiper.activeIndex;
+        initmap("allmap"+mapindexload,114.5,30.5,100,114.5,30.5);//从第二张开始
+    });
+    
+    function initmap(mapid,x,y,dis,poeplex,peopley){
+    //地图相关
     //创建地图
-    var map = new BMap.Map("allmap",{enableMapClick: false});
-
-    function drawcircle(){
-        
-    }
+    var map = new BMap.Map(mapid,{enableMapClick: false});
     //创建一个圆
-    var circle = new BMap.Circle(new BMap.Point(114.339972,30.517935),50,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
+    var circle = new BMap.Circle(new BMap.Point(x,y),dis,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
 
     var point2s = [
-        new BMap.Point(114.339972,30.517935),
+        new BMap.Point(poeplex,peopley),
 
     ];
     //创建标注点并添加到地图中
@@ -150,6 +209,7 @@
             map.addOverlay(marker);  //将标注点添加到地图上
         }
     }
+
     function initialize() {
         // 百度地图API功能
         //map.addControl(new BMap.NavigationControl());               // 添加平移缩放控件
@@ -158,12 +218,14 @@
         map.enableScrollWheelZoom();                            //启用滚轮放大缩小
         //map.addControl(new BMap.MapTypeControl());          //添加地图类型控件
 
-        var point = new BMap.Point(114.339972,30.517935);    // 创建点坐标
-        map.centerAndZoom(point,18);                      // 初始化地图,设置中心点坐标和地图级别。
+        var point = new BMap.Point(x,y);    // 创建点坐标
+        map.centerAndZoom(point,17);                      // 初始化地图,设置中心点坐标和地图级别。
         addMarker(point2s);
         map.addOverlay(circle);
     }
 
     initialize();
+}
+    
 
 </script>

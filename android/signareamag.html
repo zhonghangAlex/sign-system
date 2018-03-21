@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        input, button, select, textarea {
+            outline: none;
+            -webkit-appearance: none;
+            border-radius: 0;
+        }
+        .container{
+            background: url(./img/phone_bg.png);
+            background-size: cover;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        .main{
+            width: 90%;
+            height: 90%;
+            top: 5%;
+            left: 5%;
+            position: relative;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0px 20px 60px 0px #333;
+        }
+        .pick_title{
+            background: rgb(19, 129, 231);
+            border-radius: 20px;
+            padding: 5px 10px 5px 10px;
+            color: white;
+            font-size: 15px;
+            top: 20px;
+            width: 150px;
+            position: relative;
+        }
+        .signarea_pick{
+            width: 100%;
+            height: 40%;
+            top: 7%;
+            left: 0;
+            position: relative;
+            overflow-y :yes;
+            overflow-y :auto;
+        }
+        .option{
+            width: 80%;
+            height: 45px;
+            position: relative;
+            border-radius: 50px;
+            border:1px solid #67c23a;
+            margin-bottom: 7px;
+            font-size: 15px;
+            background: #67c23a;
+            color: white;
+            box-shadow: 0px 0px 5px 0px #444;
+        }
+        .join_title{
+            background: rgb(19, 129, 231);
+            border-radius: 20px;
+            padding: 5px 10px 5px 10px;
+            color: white;
+            font-size: 15px;
+            top: 70px;
+            width: 150px;
+            position: relative;
+        }
+        .join_input{
+            width: 60%;
+            padding: 5px 20px 5px 20px;
+            height: 50px;
+            background: #fff;
+            position: relative;
+            border-radius: 100px;
+            font-size: 20px;
+            margin-top: 30%;
+            box-shadow: 0px 0px 30px 0px #808080;
+            text-align: center;
+        }
+        .join_submit{
+            margin-top:30px;
+            width: 40%;
+            height: 50px;
+            background: #67c23a;
+            border:2px solid #67c23a;
+            box-shadow: 0px 0px 10px 0px #444;
+            color: white;
+            font-size: 20px;
+            font-weight: 2000;
+            border-radius: 15px;
+            position: relative;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+        <div class="main">
+            <center><div class="pick_title">我所在的签到域</div></center>
+            <div class="signarea_pick">
+                <center>
+                    <button class="option">XMQ-2</button>
+                    <button class="option">WE225-2</button>
+                    <button class="option">QQWE-2</button>
+                    <button class="option">XMQ-2</button>
+                    <button class="option">XMQ-2</button>
+                    <button class="option">WE225-2</button>
+                    <button class="option">QQWE-2</button>
+                    <button class="option">XMQ-2</button>
+                </center>
+            </div>
+            <center><div class="join_title">加入新的签到域</div></center>
+            <center>
+                <input type="text" id="join_input" placeholder="请输入签到域号" class="join_input"  />
+            </center>
+            <center>
+                <button type="submit"  class="join_submit" id="join_submit">确认提交</button>
+            </center>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    
+</script>

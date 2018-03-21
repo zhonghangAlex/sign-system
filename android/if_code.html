@@ -29,25 +29,50 @@
             border-radius: 15px;
             box-shadow: 0px 20px 60px 0px #333;
         }
+        .fail_message{
+            top: 5%;
+            width: 200px;
+            text-align: center;
+            left: 50%;
+            margin-left: -100px;
+            position: absolute;
+            color: #f56c6c;
+            display: none;
+        }
         .sign_code{
             width: 60%;
-            padding: 5px 20px 5px 35px;
+            padding: 5px 20px 5px 20px;
             height: 50px;
             background: #fff;
             position: relative;
             border-radius: 100px;
-            border: 3px solid #808080;
+            border: 3px solid #67c23a;
             font-size: 20px;
             margin-top: 20%;
             margin-bottom: 20px;
             box-shadow: 0px 0px 30px 0px #808080;
+            text-align: center;
+        }
+        .sign_code_fail{
+            width: 60%;
+            padding: 5px 20px 5px 20px;
+            height: 50px;
+            background: #fff;
+            position: relative;
+            border-radius: 100px;
+            border: 3px solid #f56c6c;
+            font-size: 20px;
+            margin-top: 20%;
+            margin-bottom: 20px;
+            box-shadow: 0px 0px 30px 0px #808080;
+            text-align: center;
         }
         .code_submit{
-            margin-top:16%;
+            margin-top:50px;
             width: 70%;
             height: 50px;
-            background: #4287c5;
-            border:2px solid #4287c5;
+            background: #67c23a;
+            border:2px solid #67c23a;
             box-shadow: 0px 0px 20px 0px #444;
             color: white;
             font-size: 20px;
@@ -71,10 +96,21 @@
             font-size: 20px;
             border-radius: 50%;
             list-style-type:none;
-            background: #c5c5c5;
+            background: #e6e6e6;
             color:black;
             box-shadow: 0px 0px 20px 0px #444;
             border: none;
+        }
+        .reset{
+            background: #f56c6c; 
+            color: #fff;
+        }
+        .delete{
+            background: #f56c6c; 
+            color: #fff;
+        }
+        .number{
+            font-size: 25px;
         }
         button:focus{
           outline: none;
@@ -84,37 +120,84 @@
             height: 100%;
             position: absolute;
         }
+        
 
     </style>
 </head>
 <body>
     <div class="container">
         <div class="main">
+            <span class="fail_message" id="fail_message">您输入的密令错误</span>
             <center>
-                <input type="text" placeholder="请输入多位签到密令" class="sign_code" readonly="readonly" />
+                <input type="text" id="sign_code" placeholder="请输入多位签到密令" class="sign_code" readonly="readonly" />
             </center>
             <div class="input_key_div">
                 <center>
-                    <div class="key_container">
-                        <button class="input_key">1</button>
-                        <button class="input_key">2</button>
-                        <button class="input_key">3</button>
-                        <button class="input_key">4</button>
-                        <button class="input_key">5</button>
-                        <button class="input_key">6</button>
-                        <button class="input_key">7</button>
-                        <button class="input_key">8</button>
-                        <button class="input_key">9</button>
-                        <button class="input_key">重置</button>
-                        <button class="input_key">0</button>
-                        <button class="input_key">删除</button>
+                    <div class="key_container" id="key_container">
+                        <button class="input_key number">1</button>
+                        <button class="input_key number">2</button>
+                        <button class="input_key number">3</button>
+                        <button class="input_key number">4</button>
+                        <button class="input_key number">5</button>
+                        <button class="input_key number">6</button>
+                        <button class="input_key number">7</button>
+                        <button class="input_key number">8</button>
+                        <button class="input_key number">9</button>
+                        <button class="input_key reset">重置</button>
+                        <button class="input_key number">0</button>
+                        <button class="input_key delete">删除</button>
                     </div>
                 </center>
             </div>
             <center>
-                <button type="submit"  class="code_submit">确认提交</button>
+                <button type="submit"  class="code_submit" id="code_submit">确认提交</button>
             </center>
         </div>
     </div>
 </body>
 </html>
+<script>
+    var code_input = document.getElementById('sign_code');
+    var code_key = document.getElementById('key_container').getElementsByTagName('button');
+    var code_submit = document.getElementById('code_submit');
+    var fail_message = document.getElementById('fail_message');
+    var now = 0;
+    var code_string = '';
+
+    for(let i=0; i<code_key.length; i++){
+        code_key[i].index = i;
+        code_key[i].onclick = function(){
+            now = this.index;
+            if(i == 9){
+                code_input.value = '';
+                code_string = '';
+            }
+            else if(i == 10){
+                code_string+='0';
+                code_input.value = code_string;
+            }
+            else if(i == 11){
+                code_string = code_string.slice(0,code_string.length-1)
+                code_input.value = code_string;
+            }
+            else{
+                code_string+=(i+1);
+                code_input.value = code_string;
+            }
+        } 
+    }
+
+    code_submit.onclick = function(){
+        if(1234==code_string){
+            window.location.href= './final_status.html';
+            code_input.className = "sign_code";
+            fail_message.style.display = 'none';
+        }
+        else{
+            code_input.className = "sign_code_fail";
+            fail_message.style.display = 'block';
+        }
+    }
+
+
+</script>
