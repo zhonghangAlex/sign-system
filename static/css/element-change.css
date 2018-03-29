@@ -71,9 +71,23 @@ padding: 0 35px;
 .anchorBL {
     display: none;
 }
-.gps_dia .el-dialog{
-  }
 .gps_dia .footer{
     bottom: 20px;
     position: absolute;
+}
+/*
+.newsign .gps_dia{
+    height:800px !important;
+    
+}
+*/
+/* svg {
+    width: 100% !important;
+    height: 100% !important;
+} */
+.gap_container .el-switch__label{
+    color: white;
+  }
+.gap_container .el-switch__label.is-active{
+    color:white;
 }

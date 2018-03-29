@@ -24,54 +24,168 @@
             left: 0;
             top: 0;
         }
+        .table_container{
+            width: 96%;
+            left: 2%;
+            max-height: 80%;
+            position: absolute;
+            overflow-y :yes;
+            overflow-y :auto;
+            border: 3px solid #fff;
+            border-radius: 10px;
+            margin-left: -3px;
+            top: 13%;
+        }
         .history_table{
             width: 100%;
+            position: relative;
+            text-align: center;
+            padding: 10px;
+            border:none;
+        }
+        thead{
+            color:white;
+        }
+        tbody{
+            color:powderblue;
+        }
+        tr td {
+            border: none;
+        }
+        tr{
+            height: 50px;
+        }
+        .table_index{
+            color: rgb(206, 206, 206);
+        }
+        .sign_success{
+            width: 15px;
+            height: 15px;
+            border-radius: 50px;
+            background: #67c23a;
+            position: relative;
+            box-shadow: 0px 0px 3px 0 #444;
+        }
+        .sign_fail{
+            width: 15px;
+            height: 15px;
+            border-radius: 50px;
+            background: #f56c6c;
+            position: relative;
+            box-shadow: 0px 0px 3px 0 #444;
+        }
+        .history_title{
+            top:20px;
+            font-size: 18px;
+            position: relative;
+            padding: 5px 15px 5px 15px;
+            background: #fff;
+            border-radius: 20px;
+            color: orangered;
+            font-weight: 1000;
+        }
+        .total_message{
+            top: 10px;
+            position: relative;
+            color:#fff
         }
     </style>
     
 </head>
 <body>
     <div class="container">
-            <table class="history_table" border="3" id="tab1" width="500">
+        <center><span class="history_title">XXX签到域的历史记录</span></center><br>
+        <center><span class="total_message">在该签到域中你应到X次，实到Y次</span></center>
+        <div class="table_container">
+            <table class="history_table" >
                 <thead>
                     <td>序号</td>
+                    <td>地点</td>
                     <td>开始时间</td>
                     <td>截止时间</td>
                     <td>我的状态</td>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>1</td>
-                        <td>Blue</td>
-                        <td>27</td>
-                        <td></td>
+                        <td class="table_index">1</td>
+                        <td>新二106</td>
+                        <td>2018-3-12 12:00:00</td>
+                        <td>2018-3-12 12:00:00</td>
+                        <td><center><div class="sign_success"></div></center></td>
                     </tr>
                     <tr>
-                        <td>2</td>
-                        <td>张三</td>
-                        <td>24</td>
-                        <td></td>
+                        <td class="table_index">2</td>
+                        <td>新二106</td>
+                        <td>2018-3-13 12:00:00</td>
+                        <td>2018-3-13 13:00:00</td>
+                        <td><center><div class="sign_success"></div></center></td>
                     </tr>
                     <tr>
-                        <td>3</td>
-                        <td>赵武</td>
-                        <td>17</td>
-                        <td></td>
+                        <td class="table_index">3</td>
+                        <td>新二106</td>
+                        <td>2018-3-14 12:00:00</td>
+                        <td>2018-3-14 13:00:00</td>
+                        <td><center><div class="sign_fail"></div></center></td>
                     </tr>
                     <tr>
-                        <td>4</td>
-                        <td>张以</td>
-                        <td>26</td>
-                        <td></td>
+                        <td class="table_index">4</td>
+                        <td>新二106</td>
+                        <td>2018-3-15 12:00:00</td>
+                        <td>2018-3-15 13:00:00</td>
+                        <td ><center><div class="sign_success"></div></center></td>
                     </tr>
                     <tr>
-                        <td>4</td>
-                        <td>求以</td>
-                        <td>26</td>
-                        <td></td>
+                        <td class="table_index">5</td>
+                        <td>新二106</td>
+                        <td>2018-3-17 12:00:00</td>
+                        <td>2018-3-17 13:00:00</td>
+                        <td><center><div class="sign_success"></div></center></td>
+                    </tr>
+                    <tr>
+                        <td class="table_index">6</td>
+                        <td>新二106</td>
+                        <td>2018-3-19 12:00:00</td>
+                        <td>2018-3-19 13:00:00</td>
+                        <td><center><div class="sign_success"></div></center></td>
+                    </tr>
+                    <tr>
+                        <td class="table_index">7</td>
+                        <td>新二106</td>
+                        <td>2018-3-19 12:00:00</td>
+                        <td>2018-3-19 13:00:00</td>
+                        <td><center><div class="sign_success"></div></center></td>
+                    </tr>
+                    <tr>
+                        <td class="table_index">8</td>
+                        <td>新二106</td>
+                        <td>2018-3-19 12:00:00</td>
+                        <td>2018-3-19 13:00:00</td>
+                        <td><center><div class="sign_success"></div></center></td>
+                    </tr>
+                    <tr>
+                        <td class="table_index">9</td>
+                        <td>新二106</td>
+                        <td>2018-3-19 12:00:00</td>
+                        <td>2018-3-19 13:00:00</td>
+                        <td><center><div class="sign_fail"></div></center></td>
+                    </tr>
+                    <tr>
+                        <td class="table_index">10</td>
+                        <td>新二106</td>
+                        <td>2018-3-19 12:00:00</td>
+                        <td>2018-3-19 13:00:00</td>
+                        <td><center><div class="sign_success"></div></center></td>
+                    </tr>
+                    <tr>
+                        <td class="table_index">11</td>
+                        <td>新二106</td>
+                        <td>2018-3-19 12:00:00</td>
+                        <td>2018-3-19 13:00:00</td>
+                        <td><center><div class="sign_success"></div></center></td>
                     </tr>
                 </tbody>
             </table>
+        </div>
     </div>
 </body>
 </html>

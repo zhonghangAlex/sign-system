@@ -4,46 +4,54 @@
 		<el-col :span="24" class="toolbar" style="margin-bottom: 0px;">
 			<el-form :inline="true" :model="filters" style="width:100%;" >
 				<el-form-item>
-					<el-input v-model="filters.name" placeholder="姓名"></el-input>
+					<el-input v-model="filters.search" placeholder="输入关键字查询"></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" v-on:click="getUsers">查询</el-button>
+					<el-button type="primary" v-on:click="getsign(1)">查询</el-button>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="handleAdd">新增</el-button>
-				</el-form-item>
-				<el-form-item style="float:right; margin-right:0px;">
-					<el-button type="primary" @click="handleimport" >导入</el-button>
 				</el-form-item>
 			</el-form>
 		</el-col>
 
 		<!--列表-->
-		<el-table :data="users" fit  highlight-current-row :border="border" v-loading="listLoading" @selection-change="selsChange" style="width: 100%;margin-bottom:15px;" class="tablelist">
+		<el-table :data="sign" fit  highlight-current-row :border="border" v-loading="listLoading" @selection-change="selsChange" style="width: 100%;margin-bottom:15px;" class="tablelist">
 			<el-table-column fixed="left" type="selection" width="55" align="center" >
 			</el-table-column>
-			<el-table-column fixed="left" type="index" label="ID" width="60" align="center">
+			<el-table-column prop="groupname" label="签到域名" min-width="120" align="center" sortable>
 			</el-table-column>
-			<el-table-column prop="name" label="姓名" min-width="120" align="center" sortable>
+			<el-table-column prop="place" label="签到地点" min-width="100" align="center" sortable>
 			</el-table-column>
-			<el-table-column prop="classnum" label="班级" min-width="100" align="center" sortable>
+			<el-table-column prop="room" label="地点编号" min-width="120" align="center" sortable>
 			</el-table-column>
-			<el-table-column prop="phone" label="电话" min-width="120" align="center" sortable>
+			<el-table-column prop="kind" label="地点类别" min-width="120" align="center" sortable>
 			</el-table-column>
-			<el-table-column prop="stuid" label="学号" min-width="140" align="center" sortable>
+			<el-table-column prop="sendtime" label="发布时间" width="200" align="center"  sortable>
 			</el-table-column>
-			<!--<el-table-column prop="sex" label="性别" width="100" align="center" :formatter="formatSex" sortable>
-			</el-table-column>-->
-			<el-table-column prop="password"  label="登录密码" min-width="100" align="center" sortable>
+			<!--
+			<el-table-column prop="sex" label="性别" width="100" align="center" :formatter="formatSex" sortable>
 			</el-table-column>
-			<el-table-column label="签到域号" min-width="300" max-width="500" align="center" sortable>
-				<template slot-scope="scope">
-					<el-tag :key="taglist" v-for="taglist in users[scope.$index].signno" >
-						{{taglist}}
-					</el-tag>
-				</template>
+			-->
+			<el-table-column prop="starttime" label="签到开始时间" min-width="200" align="center" sortable>
 			</el-table-column>
-			<el-table-column fixed="right" label="操作" width="150" align="center">
+			<el-table-column prop="endtime" label="签到结束时间" min-width="200" align="center" sortable>
+			</el-table-column>
+			<el-table-column prop="gap" label="循环周期" min-width="100" align="center" sortable>
+			</el-table-column>
+			<el-table-column prop="isip_bssid" label="是否开启BSSID验证" min-width="200" align="center" sortable>
+			</el-table-column>
+			<el-table-column prop="isqrcode" label="是否开启二维码验证" min-width="200" align="center" sortable>
+			</el-table-column>
+			<el-table-column prop="iscode" label="是否开启密令验证" min-width="170" align="center" sortable>
+			</el-table-column>
+			<el-table-column prop="x" label="经度" min-width="150" align="center" sortable>
+			</el-table-column>
+			<el-table-column prop="y" label="纬度" min-width="150" align="center" sortable>
+			</el-table-column>
+			<el-table-column prop="dis" label="签到半径" min-width="100" align="center" sortable>
+			</el-table-column>
+			<el-table-column fixed="right" label="操作" width="250" align="center">
 				<template slot-scope="scope"><!--<template scope="scope">-->
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
@@ -54,7 +62,7 @@
 		<!--工具条-->
 		<el-col :span="24" class="toolbar">
 			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
-			<el-pagination class="pagebtn" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage1"
+			<el-pagination class="pagebtn" :current-page="page" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" 
       :page-sizes="[5, 10, 15, 20]" :page-size="10" :total="parseInt(total)"  style="float:right;">
 			<!--<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">-->
 			</el-pagination>
@@ -63,36 +71,47 @@
 		<!--编辑界面-->
 		<el-dialog title="编辑" :visible.sync ="editFormVisible" :close-on-click-modal="false" >
 			<el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-				<el-form-item label="姓名" prop="name">
-					<el-input v-model="editForm.name" auto-complete="off" style="width:400px;"></el-input>
+				<el-form-item label="签到域名" >
+					<el-input v-model="editForm.groupname"  style="width:400px;"></el-input>
 				</el-form-item>
-				<!--
-				<el-form-item label="性别">
-					<el-radio-group v-model="editForm.sex">
-						<el-radio class="radio" :label="1">男</el-radio>
-						<el-radio class="radio" :label="0">女</el-radio>
-					</el-radio-group>
+				<el-form-item label="发布时间" >
+					<el-input v-model="editForm.sendtime"  style="width:400px;"></el-input>
 				</el-form-item>
-				-->
-				<el-form-item label="班级">
-					<el-input v-model="editForm.classnum" style="width:400px;"></el-input>
+				<el-form-item label="开始时间">
+					<el-input v-model="editForm.starttime" :disabled='true' style="width:400px;"></el-input>
 				</el-form-item>
-				<el-form-item label="电话">
-					<el-input v-model="editForm.phone" style="width:400px;"></el-input>
+				<el-form-item label="结束时间">
+					<el-input v-model="editForm.endtime" style="width:400px;"></el-input>
 				</el-form-item>
-				<el-form-item label="学号">
-					<el-input v-model="editForm.stuid" style="width:400px;"></el-input>
+				<el-form-item label="循环周期">
+					<el-input v-model="editForm.gap" style="width:400px;"></el-input>
 				</el-form-item>
-				<el-form-item label="登录密码">
-					<el-input v-model="editForm.password" style="width:400px;"></el-input>
+				<el-form-item label="是否开启BSSID验证">
+					<el-input v-model="editForm.isip_bssid" style="width:400px;"></el-input>
 				</el-form-item>
-				<el-form-item label="签到域号">
-					<el-tag :key="tag" v-for="tag in editForm.signno" closable :disable-transitions="false" @close="handleClose(tag)">
-						{{tag}}
-					</el-tag>
-					<el-input class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm">
-					</el-input>
-					<el-button v-else class="button-new-tag" size="small" @click="showInput">点击添加新的签到域</el-button>
+				<el-form-item label="是否开启二维码验证">
+					<el-input v-model="editForm.isqrcode" style="width:400px;"></el-input>
+				</el-form-item>
+				<el-form-item label="是否开启密令验证">
+					<el-input v-model="editForm.iscode" style="width:400px;"></el-input>
+				</el-form-item>
+				<el-form-item label="签到地点">
+					<el-input v-model="editForm.place" style="width:400px;"></el-input>
+				</el-form-item>
+				<el-form-item label="地点编号">
+					<el-input v-model="editForm.room" style="width:400px;"></el-input>
+				</el-form-item>
+				<el-form-item label="地点类别">
+					<el-input v-model="editForm.kind" style="width:400px;"></el-input>
+				</el-form-item>
+				<el-form-item label="经度">
+					<el-input v-model="editForm.x" style="width:400px;"></el-input>
+				</el-form-item>
+				<el-form-item label="纬度">
+					<el-input v-model="editForm.y" style="width:400px;"></el-input>
+				</el-form-item>
+				<el-form-item label="签到半径">
+					<el-input v-model="editForm.dis" style="width:400px;"></el-input>
 				</el-form-item>
 				
 			</el-form>
@@ -105,36 +124,47 @@
 		<!--新增界面-->
 		<el-dialog title="新增" :visible.sync="addFormVisible" :close-on-click-modal="false">
 			<el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
-				<el-form-item label="姓名" prop="name" style="width:400px;">
-					<el-input v-model="addForm.name" auto-complete="off"></el-input>
+				<el-form-item label="签到域名"  style="width:400px;">
+					<el-input v-model="addForm.groupname" auto-complete="off"></el-input>
 				</el-form-item>
-				<!--
-				<el-form-item label="性别">
-					<el-radio-group v-model="addForm.sex">
-						<el-radio class="radio" :label="1">男</el-radio>
-						<el-radio class="radio" :label="0">女</el-radio>
-					</el-radio-group>
+				<el-form-item label="发布时间" prop="name" style="width:400px;">
+					<el-input  v-model="addForm.sendtime"></el-input>
 				</el-form-item>
-				-->
-				<el-form-item label="班级" style="width:400px;">
-					<el-input  v-model="addForm.classnum" width="200"></el-input>
+				<el-form-item label="开始时间" style="width:400px;">
+					<el-input  v-model="addForm.starttime"></el-input>
 				</el-form-item>
-				<el-form-item label="电话" style="width:400px;">
-					<el-input  v-model="addForm.phone"></el-input>
+				<el-form-item label="结束时间" style="width:400px;">
+					<el-input  v-model="addForm.endtime"></el-input>
 				</el-form-item>
-				<el-form-item label="学号" style="width:400px;">
-					<el-input  v-model="addForm.stuid"></el-input>
+				<el-form-item label="循环周期" style="width:400px;">
+					<el-input  v-model="addForm.gap" width="200"></el-input>
 				</el-form-item>
-				<el-form-item label="登录账号" style="width:400px;">
-					<el-input  v-model="addForm.password"></el-input>
+				<el-form-item label="是否开启BSSID验证" style="width:400px;">
+					<el-input  v-model="addForm.isip_bssid"></el-input>
 				</el-form-item>
-				<el-form-item label="签到域号" style="width:400px;">
-					<el-tag :key="tag2" v-for="tag2 in addForm.signno" closable :disable-transitions="false" @close="handleClose2(tag2)">
-						{{tag2}}
-					</el-tag>
-					<el-input class="input-new-tag" v-if="inputVisible2" v-model="inputValue2" ref="saveTagInput" size="small" @keyup.enter.native="handleInputConfirm2" @blur="handleInputConfirm2">
-					</el-input>
-					<el-button v-else class="button-new-tag" size="small" @click="showInput2">点击添加新的签到域</el-button>
+				<el-form-item label="是否开启二维码验证" style="width:400px;">
+					<el-input  v-model="addForm.isqrcode"></el-input>
+				</el-form-item>
+				<el-form-item label="是否开启密令验证" style="width:400px;">
+					<el-input  v-model="addForm.iscode"></el-input>
+				</el-form-item>
+				<el-form-item label="签到地点" style="width:400px;">
+					<el-input  v-model="addForm.place"></el-input>
+				</el-form-item>
+				<el-form-item label="地点编号" style="width:400px;">
+					<el-input  v-model="addForm.room"></el-input>
+				</el-form-item>
+				<el-form-item label="地点类别" style="width:400px;">
+					<el-input  v-model="addForm.kind"></el-input>
+				</el-form-item>
+				<el-form-item label="经度" style="width:400px;">
+					<el-input  v-model="addForm.x"></el-input>
+				</el-form-item>
+				<el-form-item label="纬度" style="width:400px;">
+					<el-input  v-model="addForm.y"></el-input>
+				</el-form-item>
+				<el-form-item label="签到半径" style="width:400px;">
+					<el-input  v-model="addForm.dis"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -152,39 +182,51 @@
 	export default {
 		data() {
 			return {
-				//getUsers相关
-				filters: {
-					name: ''
+				//文件上传
+				//fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
+				fileList: [],
+				limit:1,
+				uploadform:{
+
 				},
-				users: [],
+				fileimportVisible:false,
+				//密码重置
+				//getsign相关
+				filters: {
+					search: ''
+				},
+				sign: [],
 				total: 0,
 				page: 1,
+				pagesize:10,
 				border:false,
 				listLoading: false,
 				sels: [],//列表选中列
 
-				currentPage1:1,
 				//编辑页面相关
 				editFormVisible: false,//编辑界面是否显示
 				editLoading: false,
 				editFormRules: {
 					name: [
-						{ required: true, message: '请输入姓名', trigger: 'blur' }
+						{ required: true, message: '请输入学号', trigger: 'blur' }
 					]
 				},
 				//编辑界面数据
 				editForm: {
-					id: 0,
-					name: '',
-					sex: '',
-					age: 0,
-					birth: '',
-					addr: '',
-					signno:'',
-					classnum:'',
-					stuid:'',
-					password:'',
-					phone:''
+					groupname: '',
+					sendtime: '',
+					starttime:'',
+					endtime:'',
+					gap:'',
+					isip_bssid:'',
+					isqrcode:'',
+					iscode:'',
+					place:'',
+					room:'',
+					kind:'',
+					x:'',
+					y:'',
+					dis:''
 				},
 				//编辑页面tag
 				inputVisible: false,
@@ -194,21 +236,25 @@
 				addLoading: false,
 				addFormRules: {
 					name: [
-						{ required: true, message: '请输入姓名', trigger: 'blur' }
+						{ required: true, message: '请输入学号', trigger: 'blur' }
 					]
 				},
 				//新增界面数据
 				addForm: {
-					name: '',
-					sex: -1,
-					age: 0,
-					birth: '',
-					addr: '',
-					signno:'',
-					classnum:'',
-					stuid:'',
-					password:'',
-					phone:''
+					groupname: '',
+					sendtime: '',
+					starttime:'',
+					endtime:'',
+					gap:'',
+					isip_bssid:'',
+					isqrcode:'',
+					iscode:'',
+					place:'',
+					room:'',
+					kind:'',
+					x:'',
+					y:'',
+					dis:''
 				},
 				//新增页面tag
 				inputVisible2: false,
@@ -217,67 +263,94 @@
 			}
 		},
 		methods: {
-			//性别显示转换
-			formatSex: function (row, column) {
-				return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
-			},
+			
+
+			//分页器
 			handleSizeChange(val) {
 				console.log(`每页 ${val} 条`);
+				this.pagesize = val;
+				this.getsign(0);
 			},
 			handleCurrentChange(val) {
 				console.log(`当前页: ${val}`);
 				this.page = val;
-				this.getUsers();
+				this.getsign(0);
+				return 
+			},
+
+			//得到正确的index索引
+			tableindex(index){
+				index = (this.page-1)*this.pagesize+index+1;
+				return index;
 			},
 			//获取用户列表
-			getUsers() {
+			getsign(x) {
 				var _this = this;
 				this.listLoading = true;
-				axios.get('/api/userform',{
+				if(x==1){
+					this.page = 1;
+				}
+				axios.get('http://120.79.12.163/getsign',{//http://120.79.12.163/getstu
 					params: {
 						page: _this.page,//查询参数
-						name: _this.filters.name//查询参数
+						pagesize:_this.pagesize,
+						search: _this.filters.search//查询参数
 					}
 				})
 				.then(function (response) {
 					console.log(response);
-					_this.total = response.data.total;
-					_this.users = response.data.users;
+					_this.total = response.data.count;
+					_this.sign = response.data.sign;
 					_this.listLoading = false;
 				})
 				.catch(function (error) {
 					console.log(error);
 				});
 			},
+			
 			//删除
 			handleDel: function (index, row) {
 				var _this = this;
 				this.$confirm('确认删除该记录吗?', '提示', {
 					type: 'warning'
 				}).then(() => {
-					this.listLoading = true;
-					axios.get('/api/userform',{
+					//this.listLoading = true;
+					axios.get('http://120.79.12.163/studelete',{
 						params: {
-							id: row.id,//查询参数
+							stuid: '['+'\"'+row.stuid+'\"'+']',   
 						}
 					})
 					.then(function (response) {
 						console.log(response);
-						_this.listLoading = false;
+						var d = response.data;
+						
 						//NProgress.done();
+						if(d.status==1)
 						_this.$message({
-							message: '删除成功',
+							message: d.message,
 							type: 'success'
 						});
-						_this.getUsers();
+						if(d.status==0)
+						_this.$message({
+							message: d.message,
+							type: 'error'
+						});
+						_this.getsign(0);
+						_this.listLoading = false;
 					})
 					.catch(function (error) {
 						console.log(error);
+						_this.$message({
+							message: "数据请求失败",
+							type: 'error'
+						});
+						_this.listLoading = false;
 					});
 				}).catch(() => {
 
 				});
 			},
+
 			//显示编辑界面
 			handleEdit: function (index, row) {
 				this.editFormVisible = true;
@@ -288,17 +361,25 @@
 			handleAdd: function () {
 				this.addFormVisible = true;
 				this.addForm = {
-					name: '',
-					sex: -1,
-					age: 0,
-					birth: '',
-					addr: '',
-					signno:[],
-					classnum:'',
-					stuid:'',
-					password:'',
-					phone:''
+					groupname: '',
+					sendtime: '',
+					starttime:'',
+					endtime:'',
+					gap:'',
+					isip_bssid:'',
+					isqrcode:'',
+					iscode:'',
+					place:'',
+					room:'',
+					kind:'',
+					x:'',
+					y:'',
+					dis:''
 				};
+			},
+			//密码重置
+			resetpsdSubmit: function (){
+				var _this = this;
 			},
 			//编辑
 			editSubmit: function () {
@@ -309,20 +390,34 @@
 							this.editLoading = true;
 							//NProgress.start();
 							let para = Object.assign({}, this.editForm);
-							para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
+							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
 							
-							axios.get('/api/userform',{params:para})
+							for(var i=0; i<para.signno.length; i++){
+								para.signno[i] ='\"'+para.signno[i]+'\"';
+							}
+							para.signno = '['+para.signno.toString()+']';
+							
+							para.way = 2;
+							//para.signno 
+							axios.get('http://120.79.12.163/stumodify',{params:para})
 							.then(function (response) {
 								console.log(response);
 								_this.editLoading = false;
 								//NProgress.done();
+								var d=response.data
+								if(d.status==1)
 								_this.$message({
-									message: '提交成功',
+									message: d.message,
 									type: 'success'
+								});
+								if(d.status==0)
+								_this.$message({
+									message: d.message,
+									type: 'error'
 								});
 								_this.$refs['editForm'].resetFields();
 								_this.editFormVisible = false;
-								_this.getUsers();
+								_this.getsign(0);
 							})
 							.catch(function (error) {
 								console.log(error);
@@ -351,6 +446,7 @@
 				this.inputVisible = false;
 				this.inputValue = '';
 			},
+
 			//新增
 			addSubmit: function () {
 				var _this = this;
@@ -360,20 +456,31 @@
 							this.addLoading = true;
 							//NProgress.start();
 							let para = Object.assign({}, this.addForm);
-							para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-							
-							axios.get('/api/userform',{params:para})
+							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
+							for(var i=0; i<para.signno.length; i++){
+								para.signno[i] ='\"'+para.signno[i]+'\"';
+							}
+							para.signno = '['+para.signno.toString()+']';
+							para.way = 1;
+							axios.get('http://120.79.12.163/stumodify',{params:para})
 							.then(function (response) {
 								console.log(response);
+								var d = response.data;
 								_this.addLoading = false;
 								//NProgress.done();
+								if(d.status==1)
 								_this.$message({
-									message: '提交成功',
+									message: d.message,
 									type: 'success'
+								});
+								if(d.status==0)
+								_this.$message({
+									message: d.message,
+									type: 'error'
 								});
 								_this.$refs['addForm'].resetFields();
 								_this.addFormVisible = false;
-								_this.getUsers();
+								_this.getsign(0);
 							})
 							.catch(function (error) {
 								console.log(error);
@@ -382,6 +489,7 @@
 					}
 				});
 			},
+
 			//新增页面的tag操作
 			handleClose2(tag2) {
 				this.addForm.signno.splice(this.addForm.signno.indexOf(tag2), 1);
@@ -404,33 +512,45 @@
 			selsChange: function (sels) {
 				this.sels = sels;
 			},
-			//批量导入操作
-			handleimport(){
-
-			},
+			
+			
+			
 			//批量删除
 			batchRemove: function () {
 				var _this = this;
-				var stuids = this.sels.map(item => item.stuid).toString();
+				var stuids = this.sels.map(item => '\"'+item.stuid+'\"').toString();
+				stuids = '['+stuids+']';
 				this.$confirm('确认删除选中记录吗？', '提示', {
 					type: 'warning'
 				}).then(() => {
-					this.listLoading = true;
+					//this.listLoading = true;
 					//NProgress.start();
-					let para = { stuids: stuids };
-					axios.get('/api/userform',{params:para})
+					let para = { stuid: stuids };
+					console.log(para);
+					axios.get('http://120.79.12.163/studelete',{params:para})
 					.then(function (response) {
 						console.log(response);
+						var d = response.data;
 						_this.listLoading = false;
 						//NProgress.done();
+						if(d.status==1)
 						_this.$message({
-							message: '删除成功',
+							message: d.message,
 							type: 'success'
 						});
-						_this.getUsers();
+						if(d.status==0)
+						_this.$message({
+							message: d.message,
+							type: 'error'
+						});
+						_this.getsign(0);
 					})
 					.catch(function (error) {
 						console.log(error);
+						_this.$message({
+							message: "数据请求失败",
+							type: 'error'
+						});
 					});
 				}).catch(() => {
 
@@ -438,7 +558,7 @@
 			}
 		},
 		mounted() {
-			this.getUsers();
+			this.getsign(0);
 		}
 	}
 
@@ -489,6 +609,9 @@
 		color: #fff;
 		background-color: #658aacab;
 		border-color: #658aacab;
+	}
+	/*导入部分*/
+	.el-upload__tip{
 	}
 	
 	

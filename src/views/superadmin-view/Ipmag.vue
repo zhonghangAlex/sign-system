@@ -52,9 +52,9 @@
 			-->
 			<el-table-column prop="room" label="编号" min-width="140" align="center" sortable>
 			</el-table-column>
-			<el-table-column prop="ip" label="IP地址" min-width="100" align="center" sortable>
+			<el-table-column prop="ip" label="IP地址" min-width="150" align="center" sortable>
 			</el-table-column>
-			<el-table-column prop="bssid" label="BSSID" min-width="100" align="center" sortable>
+			<el-table-column prop="bssid" label="BSSID" min-width="160" align="center" sortable>
 			</el-table-column>
 			<el-table-column prop="x" label="经度" min-width="120" align="center" sortable>
 			</el-table-column>

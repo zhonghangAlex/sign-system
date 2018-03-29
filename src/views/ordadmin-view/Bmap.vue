@@ -2,12 +2,20 @@
     <center>
         <form>
             <div style=" margin:auto;width:95%;height:500px;border:2px solid gray; margin-bottom:10px;" id="container"></div>
-            <h3 style="color: red;">介绍：输入地点然后点击“地图查找”搜索，再点击地图地点获取相应经纬度</h3>
+            <h3 style="color: red;">介绍：①可点击地图确定签到地点；②可通过下方经度，纬度，半径查询确定签到地点</h3>
+            <!--
             <label>输入地点：</label>
             <input id="where" name="where" type="text" placeholder="请输入地址">
-            <input id="but" type="button" value="地图查找" onClick="sear(document.getElementById('where').value);" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 经度：
-            <input id="lonlat" name="lonlat" type="number" maxlength="10">纬度：
-            <input id="lonlat2" name="lonlat2" type="number" maxlength="9">
+            input id="but" type="button" value="地图查找" onClick="sear(document.getElementById('where').value);" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
+            经度：
+            <input id="lonlat" name="lonlat" type="number" value="114.339972" maxlength="10">
+            纬度：
+            <input id="lonlat2" name="lonlat2" type="number" value="30.517935" maxlength="9">
+            半径：
+            <input id="dis" name="dis" type="number" value="50" maxlength="9">
+            <input type="button" value="查找" id="search" /><br>
+            <div id="detail"></div>
+            
         </form>
     </center>
 </template>
@@ -18,80 +26,98 @@ import BMap from 'BMap'
 
 
 export default {
-  data () {
-    return {
+    data () {
+        return {
 
-    }
-  },
-  methods: {
-    ready: function startmap() {
-    var longitude=114.339972;
-    var latitude=30.517935;
-   
-    var map = new BMap.Map("container",{enableMapClick: false});
-    map.setDefaultCursor("crosshair");
-    map.enableScrollWheelZoom();
-    var point = new BMap.Point(longitude,latitude);
-    map.centerAndZoom(point, 13);
-    var gc = new BMap.Geocoder();
-    //map.addControl(new BMap.NavigationControl());  // 添加平移缩放控件
-    //map.addControl(new BMap.OverviewMapControl()); //添加缩略地图控件
-    //map.addControl(new BMap.ScaleControl()); // 添加比例尺控件
-    //map.addControl(new BMap.MapTypeControl()); //添加地图类型控件
-    //map.addControl(new BMap.CopyrightControl());
-    var marker = new BMap.Marker(point);
-    map.addOverlay(marker);
-    marker.addEventListener("click",
-    function(e) {
-        document.getElementById("lonlat").value = e.point.lng;
-        document.getElementById("lonlat2").value = e.point.lat;
-    });
-    marker.enableDragging();
-    marker.addEventListener("dragend",
-    function(e) {
-        gc.getLocation(e.point,
-        function(rs) {
-        showLocationInfo(e.point, rs);
-        });
-    });
-    function showLocationInfo(pt, rs) {
-        var opts = {
-        width: 250,
-        height: 150,
-        title: "当前位置"
-        };
-        var addComp = rs.addressComponents;
-        var addr = "当前位置：" + addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber + "<br/>";
-        addr += "纬度: " + pt.lat + ", " + "经度：" + pt.lng;
-        var infoWindow = new BMap.InfoWindow(addr, opts);
-        marker.openInfoWindow(infoWindow);
-    }
-    map.addEventListener("click",
-    function(e) {
-        document.getElementById("lonlat").value = e.point.lng;
-        document.getElementById("lonlat2").value = e.point.lat;
-    });
-    var traffic = new BMap.TrafficLayer();
-    map.addTileLayer(traffic);
-    function iploac(result) {
-        var cityName = result.name;
-    }
-    var myCity = new BMap.LocalCity();
-    myCity.get(iploac);
-    function sear(result) {
-        var local = new BMap.LocalSearch(map, {
-            renderOptions: {
-                map: map
+        }
+    },
+    methods: {
+        ready: function startmap() {
+            var longitude=114.339972;
+            var latitude=30.517935;
+            var dis=50;
+
+            var map = new BMap.Map("container",{enableMapClick:false});
+            map.setDefaultCursor("crosshair");
+            map.enableScrollWheelZoom();
+            var point = new BMap.Point(longitude,latitude);
+            var circle = new BMap.Circle(point,50,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
+            map.centerAndZoom(point, 17);
+            var gc = new BMap.Geocoder();
+            map.disableDoubleClickZoom();//禁用双击事件
+            var marker = new BMap.Marker(point);
+            map.addOverlay(circle);
+            map.addOverlay(marker);
+            
+
+            //初始化地址
+            gc.getLocation(point,
+            function(rs) {
+                showdetail(point, rs);
+            });
+
+            //地图点击事件
+            map.addEventListener("click",
+            function mapdraw(e,rs) {
+                map.clearOverlays();
+                document.getElementById("lonlat").value = e.point.lng;
+                document.getElementById("lonlat2").value = e.point.lat;
+                longitude = e.point.lng;
+                latitude = e.point.lat;
+                point = new BMap.Point(longitude,latitude);
+                circle = new BMap.Circle(point,dis,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
+                marker = new BMap.Marker(point);
+                map.addOverlay(circle);
+                map.addOverlay(marker);
+                //动态画圆
+                
+                
+                //动态获取地址
+                gc.getLocation(e.point,
+                function(rs) {
+                    showdetail(e.point, rs);
+                });
+            });
+            
+            //精准查询
+            var lonlat = document.getElementById("lonlat");
+            var lonlat2 = document.getElementById("lonlat2");
+            var inputdis = document.getElementById("dis") 
+
+            document.getElementById('search').onclick = function(point,rs){
+                longitude = lonlat.value;
+                latitude = lonlat2.value;
+                dis = inputdis.value;
+                mapdraw(point,rs);
+                function mapdraw(point,rs) {
+                    map.clearOverlays();
+
+                    circle = new BMap.Circle(new BMap.Point(longitude,latitude),dis,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
+                    point = new BMap.Point(longitude,latitude);
+                    marker = new BMap.Marker(point);
+                    map.addOverlay(marker);
+                    map.addOverlay(circle);
+
+                   //动态获取地址
+                    gc.getLocation(point,
+                    function(rs) {
+                        showdetail(point, rs);
+                    });
+                }
             }
-        });
-        local.search(result);
+
+            //获取地址的函数
+            function showdetail(pt, rs) {
+                var addComp = rs.addressComponents;
+                var addr = '地址：'+ addComp.province + addComp.city + addComp.district  + addComp.street  + addComp.streetNumber
+                document.getElementById("detail").innerHTML = addr;
+            }
+        },
+    },
+    mounted(){
+        this.ready();
+        
     }
-    }
-  },
-  mounted(){
-    this.ready();
-    
-  }
 }
 </script>
 
