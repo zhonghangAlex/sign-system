@@ -135,10 +135,11 @@
       </div>
     </el-dialog>
     <!--提交成功后显示二维码下载&code界面-->	
-		<el-dialog title="需要验证的信息" :visible.sync ="codeVisible" :close-on-click-modal="false" >
-      <el-input placeholder="暂无签到密令，如果需要请重新设置" v-model="code" v-show="if_code" :disabled="true" style="width:200px;"></el-input>
-      <el-button style="float:right" size="small"  type="success" @click="qr_download()" native-type="submit" target="_blank">本次签到二维码下载</el-button>
-
+		<el-dialog title="发布签到成功" :visible.sync ="codeVisible" :close-on-click-modal="false" >
+      <center>
+        <el-input placeholder="暂无签到密令，如果需要请重新设置" v-model="code" v-show="if_code" :disabled="true" style="width:200px;text-align:center;"></el-input>
+        <el-button style="" size="small"  type="success" v-show="if_qrcode" @click="qr_download()" native-type="submit" target="_blank">本次签到二维码下载</el-button>
+      </center>
 			
 			<div slot="footer" class="dialog-footer">
 				<el-button type="primary" @click.native="codeVisible = false">完成</el-button>
@@ -211,7 +212,9 @@ export default {
         signid:'',
 
         //提交成功后的code信息
-        codeVisible:false
+        codeVisible:false,
+        if_code:true,
+        if_qrcode:true
 
     }
   },
@@ -336,6 +339,12 @@ export default {
         if(response.data.status==1){
           if(response.data.code!=''||response.data.qrcode!=''){
             _this.codeVisible = true;
+          }
+          if(response.data.code==''){
+            _this.if_code = false;
+          }
+          if(response.data.qrcode==''){
+            _this.if_qrcode = false;
           }
           
           _this.if_code = true;

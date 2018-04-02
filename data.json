@@ -1,16 +1,17 @@
 {
     "signarea": [
                     {
-                            "signno": "X1M103-2",
-                            "name":"江长斌",
-                            "workid":"3490110",
-                            "estabtime":"2018-3-4 15:32:33",
-                            "signcount":"12",
-                            "studentsname": [
-                                                {"name": "李钟航","stuid": "258103"},
-                                                {"name": "短时是","stuid": "222222"},
-                                                {"name": "撒旦撒","stuid": "121111"}
-                                            ]
+                            "groupname": "X1M103-2",
+                            "signsuccess": [
+                                {"name": "李钟航","stuid": "258103"},
+                                {"name": "短时是","stuid": "222222"},
+                                {"name": "撒旦撒","stuid": "121111"}
+                                            ],
+                            "signfail": [
+                                {"name": "李钟航","stuid": "258103"},
+                                {"name": "短时是","stuid": "222222"},
+                                {"name": "撒旦撒","stuid": "121111"}
+                            ]
                     },
                     {
                             "signno": "X1M103-1",

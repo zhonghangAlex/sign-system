@@ -4,13 +4,11 @@
 		<el-col :span="24" class="toolbar" style="margin-bottom: 0px;">
 			<el-form :inline="true" :model="filters" style="width:100%;" >
 				<el-form-item>
-					<el-input v-model="filters.search" placeholder="输入关键字查询"></el-input>
+					<el-input @change="searchchange" v-model="filters.search"  placeholder="输入关键字查询"></el-input>
+					
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" v-on:click="getsign(1)">查询</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" @click="handleAdd">新增</el-button>
 				</el-form-item>
 			</el-form>
 		</el-col>
@@ -18,6 +16,8 @@
 		<!--列表-->
 		<el-table :data="sign" fit  highlight-current-row :border="border" v-loading="listLoading" @selection-change="selsChange" style="width: 100%;margin-bottom:15px;" class="tablelist">
 			<el-table-column fixed="left" type="selection" width="55" align="center" >
+			</el-table-column>
+			<el-table-column prop="id" label="唯一标识" v-if="showid" min-width="120" align="center" sortable>
 			</el-table-column>
 			<el-table-column prop="groupname" label="签到域名" min-width="120" align="center" sortable>
 			</el-table-column>
@@ -53,6 +53,7 @@
 			</el-table-column>
 			<el-table-column fixed="right" label="操作" width="250" align="center">
 				<template slot-scope="scope"><!--<template scope="scope">-->
+					<el-button type="danger" size="small"  @click="handledetailopen(scope.$index, scope.row,1)">详情</el-button>
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
 				</template>
@@ -70,15 +71,15 @@
 
 		<!--编辑界面-->
 		<el-dialog title="编辑" :visible.sync ="editFormVisible" :close-on-click-modal="false" >
-			<el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
+			<el-form :model="editForm" label-width="150px" :rules="editFormRules" ref="editForm">
 				<el-form-item label="签到域名" >
 					<el-input v-model="editForm.groupname"  style="width:400px;"></el-input>
 				</el-form-item>
 				<el-form-item label="发布时间" >
-					<el-input v-model="editForm.sendtime"  style="width:400px;"></el-input>
+					<el-input v-model="editForm.sendtime" :disabled='true' style="width:400px;"></el-input>
 				</el-form-item>
 				<el-form-item label="开始时间">
-					<el-input v-model="editForm.starttime" :disabled='true' style="width:400px;"></el-input>
+					<el-input v-model="editForm.starttime"  style="width:400px;"></el-input>
 				</el-form-item>
 				<el-form-item label="结束时间">
 					<el-input v-model="editForm.endtime" style="width:400px;"></el-input>
@@ -113,84 +114,58 @@
 				<el-form-item label="签到半径">
 					<el-input v-model="editForm.dis" style="width:400px;"></el-input>
 				</el-form-item>
-				
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click.native="editFormVisible = false">取消</el-button>
 				<el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
 			</div>
 		</el-dialog>
-
-		<!--新增界面-->
-		<el-dialog title="新增" :visible.sync="addFormVisible" :close-on-click-modal="false">
-			<el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
-				<el-form-item label="签到域名"  style="width:400px;">
-					<el-input v-model="addForm.groupname" auto-complete="off"></el-input>
+		<!--详情界面-->
+		<el-dialog title="签到详情" width="80%" :visible.sync ="signdetailFormVisible" :close-on-click-modal="false" >
+			<el-form :model="signdetail" label-width="220px" :rules="signdetailFormRules" ref="editForm">
+				<el-form-item label="签到域编号" >
+					<el-input v-model="signdetail.groupname" :disabled='true'  style="width:400px;"></el-input>
 				</el-form-item>
-				<el-form-item label="发布时间" prop="name" style="width:400px;">
-					<el-input  v-model="addForm.sendtime"></el-input>
+				<el-form-item label="学生查询">
+					<el-input v-model="signdetailfilters.search"  placeholder="输入关键字查询" style="width:250px;"></el-input>
 				</el-form-item>
-				<el-form-item label="开始时间" style="width:400px;">
-					<el-input  v-model="addForm.starttime"></el-input>
+				<el-form-item>
+					<el-button type="primary" @click="handledetailopen(0)" style="position:absolute;margin-top:-62px;margin-left:260px;">查询</el-button>
 				</el-form-item>
-				<el-form-item label="结束时间" style="width:400px;">
-					<el-input  v-model="addForm.endtime"></el-input>
+				<el-form-item label="统计图">
+					<div id="chartPie" style="width:60%; height:350px;"></div>
 				</el-form-item>
-				<el-form-item label="循环周期" style="width:400px;">
-					<el-input  v-model="addForm.gap" width="200"></el-input>
+				<el-form-item :label="labelsuccess">
+					<el-tag  type="success" :key="tag.stuid" v-for="tag in signdetail.signsuccess"  :disable-transitions="false" >
+						学号:&nbsp;{{tag.stuid}}&nbsp;&nbsp;姓名:&nbsp;{{tag.name}}</el-tag>
 				</el-form-item>
-				<el-form-item label="是否开启BSSID验证" style="width:400px;">
-					<el-input  v-model="addForm.isip_bssid"></el-input>
+				<el-form-item :label="labelfail">
+					<el-tag type="danger" :key="tag.stuid" v-for="tag in signdetail.signfail"  :disable-transitions="false"  >
+						学号:&nbsp;{{tag.stuid}}&nbsp;&nbsp;姓名:&nbsp;{{tag.name}}</el-tag>
 				</el-form-item>
-				<el-form-item label="是否开启二维码验证" style="width:400px;">
-					<el-input  v-model="addForm.isqrcode"></el-input>
-				</el-form-item>
-				<el-form-item label="是否开启密令验证" style="width:400px;">
-					<el-input  v-model="addForm.iscode"></el-input>
-				</el-form-item>
-				<el-form-item label="签到地点" style="width:400px;">
-					<el-input  v-model="addForm.place"></el-input>
-				</el-form-item>
-				<el-form-item label="地点编号" style="width:400px;">
-					<el-input  v-model="addForm.room"></el-input>
-				</el-form-item>
-				<el-form-item label="地点类别" style="width:400px;">
-					<el-input  v-model="addForm.kind"></el-input>
-				</el-form-item>
-				<el-form-item label="经度" style="width:400px;">
-					<el-input  v-model="addForm.x"></el-input>
-				</el-form-item>
-				<el-form-item label="纬度" style="width:400px;">
-					<el-input  v-model="addForm.y"></el-input>
-				</el-form-item>
-				<el-form-item label="签到半径" style="width:400px;">
-					<el-input  v-model="addForm.dis"></el-input>
+				<el-form-item label="详情导出">
+					<el-button class="importexcel"  size="small" type="success" @click.native="importexcel">导出本次签到的Excel表</el-button>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button @click.native="addFormVisible = false">取消</el-button>
-				<el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
+				<el-button @click.native="signdetailFormVisible = false">关闭界面</el-button>
 			</div>
 		</el-dialog>
+
+		
 	</section>
 </template>
 
 <script>
+	import echarts from 'echarts'
 	import axios from 'axios'
 	import util from '../../common/util'
 	//import NProgress from 'nprogress'
 	export default {
 		data() {
 			return {
-				//文件上传
-				//fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
-				fileList: [],
-				limit:1,
-				uploadform:{
-
-				},
-				fileimportVisible:false,
-				//密码重置
+				showid:false,
+				
 				//getsign相关
 				filters: {
 					search: ''
@@ -208,7 +183,7 @@
 				editLoading: false,
 				editFormRules: {
 					name: [
-						{ required: true, message: '请输入学号', trigger: 'blur' }
+						{ required: true, message: '请输入', trigger: 'blur' }
 					]
 				},
 				//编辑界面数据
@@ -232,37 +207,130 @@
 				inputVisible: false,
 				inputValue: '',
 
-				addFormVisible: false,//新增界面是否显示
-				addLoading: false,
-				addFormRules: {
-					name: [
-						{ required: true, message: '请输入学号', trigger: 'blur' }
-					]
+				//详情相关
+				signdetailFormVisible:false,
+				signdetailFormRules:{
+
 				},
-				//新增界面数据
-				addForm: {
-					groupname: '',
-					sendtime: '',
-					starttime:'',
-					endtime:'',
-					gap:'',
-					isip_bssid:'',
-					isqrcode:'',
-					iscode:'',
-					place:'',
-					room:'',
-					kind:'',
-					x:'',
-					y:'',
-					dis:''
+				signdetailfilters:{
+					search:''
 				},
-				//新增页面tag
-				inputVisible2: false,
-				inputValue2: '',
+				//存储发送过来的detail信息
+				signdetail:{},
+				//存储个数
+				signsuccesscount:'',
+				signfailcount:'',
+				//动态加载标签
+				labelsuccess:'',
+				labelfail:'',
+				//存储点开详情时当行的id唯一标识
+				detailsaveid:'',
+				//饼状图
+				chartPie: null,
+
 
 			}
 		},
 		methods: {
+			//详情相关
+			//显示页面并初始化数据
+			handledetailopen: function(index, row,x){
+				var _this = this;
+				_this.signdetailFormVisible = true;
+				if(x==1){
+					_this.detailsaveid = row.id;
+				}
+				axios.get('http://120.79.12.163/msigndetail?signid='+_this.detailsaveid+'&search='+_this.signdetailfilters.search)
+				.then(function (response) {
+					_this.signdetail = response.data;
+					_this.signsuccesscount = response.data.successcount;
+					_this.signfailcount = parseInt(response.data.totalcount)-parseInt(response.data.successcount);
+					if(response.data.totalcount&&response.data.successcount){
+						_this.labelsuccess = '签到成功的学生（'+_this.signsuccesscount+'人 )';
+						_this.labelfail = '未签到的学生（'+_this.signfailcount+'人 )';
+					}else{
+						if(response.data.signsuccess!=''&&response.data.signfali!='')
+						{
+							_this.labelsuccess = '查询结果：已签到学生';
+							_this.labelfail = '查询结果：未签到的学生';
+						}
+						if(response.data.signsuccess!=''&&response.data.signfail=='')
+						{
+							_this.labelsuccess = '查询结果：已签到学生';
+							_this.labelfail = '无对应未签到学生';
+						}
+						if(response.data.signsuccess==''&&response.data.signfail!='')
+						{
+							_this.labelsuccess = '无对应已签到学生';
+							_this.labelfail = '查询结果：未签到的学生';
+						}
+						if(response.data.signsuccess==''&&response.data.signfail=='')
+						{
+							_this.labelsuccess = '无对应学生';
+						}
+						
+					}
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+
+			},
+			//导出excel表
+			importexcel(){
+				window.open("http://120.79.12.163/signrecordexport?signid="+this.detailsaveid);
+			},
+			//详情的统计图
+			drawPieChart() {
+				var _this = this;
+                this.chartPie = echarts.init(document.getElementById('chartPie'));
+                this.chartPie.setOption({
+					color:['#67c23a','#f56c6c'],
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b}: {c} ({d}%)"
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        x: 'left',
+                        data:['实到人数','缺勤人数'],
+
+                    },
+                    series: [
+                        {
+                            name:'人数统计',
+                            type:'pie',
+                            radius: ['50%', '70%'],
+                            avoidLabelOverlap: false,
+                            label: {
+                                normal: {
+                                    show: false,
+                                    position: 'center'
+                                },
+                                emphasis: {
+                                    show: true,
+                                    textStyle: {
+                                        fontSize: '30',
+                                        fontWeight: 'bold'
+                                    }
+                                }
+                            },
+                            labelLine: {
+                                normal: {
+                                    show: false
+                                }
+                            },
+                            data:[
+                                {value:_this.signsuccesscount, name:'实到人数'},
+                                {value:_this.signfailcount, name:'缺勤人数'}
+                            ]
+                        }
+                    ]
+                });
+            },
+            drawCharts() {
+                this.drawPieChart()
+            },
 			
 
 			//分页器
@@ -277,11 +345,17 @@
 				this.getsign(0);
 				return 
 			},
+			selsChange: function (sels) {
+				this.sels = sels;
+			},
 
 			//得到正确的index索引
 			tableindex(index){
 				index = (this.page-1)*this.pagesize+index+1;
 				return index;
+			},
+			searchchange(){
+				this.getsign(1);
 			},
 			//获取用户列表
 			getsign(x) {
@@ -298,7 +372,6 @@
 					}
 				})
 				.then(function (response) {
-					console.log(response);
 					_this.total = response.data.count;
 					_this.sign = response.data.sign;
 					_this.listLoading = false;
@@ -315,13 +388,12 @@
 					type: 'warning'
 				}).then(() => {
 					//this.listLoading = true;
-					axios.get('http://120.79.12.163/studelete',{
+					axios.get('http://120.79.12.163/signdelete',{
 						params: {
-							stuid: '['+'\"'+row.stuid+'\"'+']',   
+							id: '['+'\"'+row.id+'\"'+']',   
 						}
 					})
 					.then(function (response) {
-						console.log(response);
 						var d = response.data;
 						
 						//NProgress.done();
@@ -355,32 +427,8 @@
 			handleEdit: function (index, row) {
 				this.editFormVisible = true;
 				this.editForm = Object.assign({}, row);
-				console.log(this.editForm);
 			},
-			//显示新增界面
-			handleAdd: function () {
-				this.addFormVisible = true;
-				this.addForm = {
-					groupname: '',
-					sendtime: '',
-					starttime:'',
-					endtime:'',
-					gap:'',
-					isip_bssid:'',
-					isqrcode:'',
-					iscode:'',
-					place:'',
-					room:'',
-					kind:'',
-					x:'',
-					y:'',
-					dis:''
-				};
-			},
-			//密码重置
-			resetpsdSubmit: function (){
-				var _this = this;
-			},
+			
 			//编辑
 			editSubmit: function () {
 				var _this = this;
@@ -392,16 +440,9 @@
 							let para = Object.assign({}, this.editForm);
 							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
 							
-							for(var i=0; i<para.signno.length; i++){
-								para.signno[i] ='\"'+para.signno[i]+'\"';
-							}
-							para.signno = '['+para.signno.toString()+']';
-							
-							para.way = 2;
 							//para.signno 
-							axios.get('http://120.79.12.163/stumodify',{params:para})
+							axios.get('http://120.79.12.163/signmodify',{params:para})
 							.then(function (response) {
-								console.log(response);
 								_this.editLoading = false;
 								//NProgress.done();
 								var d=response.data
@@ -446,90 +487,20 @@
 				this.inputVisible = false;
 				this.inputValue = '';
 			},
-
-			//新增
-			addSubmit: function () {
-				var _this = this;
-				this.$refs.addForm.validate((valid) => {
-					if (valid) {
-						this.$confirm('确认提交吗？', '提示', {}).then(() => {
-							this.addLoading = true;
-							//NProgress.start();
-							let para = Object.assign({}, this.addForm);
-							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-							for(var i=0; i<para.signno.length; i++){
-								para.signno[i] ='\"'+para.signno[i]+'\"';
-							}
-							para.signno = '['+para.signno.toString()+']';
-							para.way = 1;
-							axios.get('http://120.79.12.163/stumodify',{params:para})
-							.then(function (response) {
-								console.log(response);
-								var d = response.data;
-								_this.addLoading = false;
-								//NProgress.done();
-								if(d.status==1)
-								_this.$message({
-									message: d.message,
-									type: 'success'
-								});
-								if(d.status==0)
-								_this.$message({
-									message: d.message,
-									type: 'error'
-								});
-								_this.$refs['addForm'].resetFields();
-								_this.addFormVisible = false;
-								_this.getsign(0);
-							})
-							.catch(function (error) {
-								console.log(error);
-							});
-						});
-					}
-				});
-			},
-
-			//新增页面的tag操作
-			handleClose2(tag2) {
-				this.addForm.signno.splice(this.addForm.signno.indexOf(tag2), 1);
-			},
-			showInput2() {
-				this.inputVisible2 = true;
-				this.$nextTick(_ => {
-				this.$refs.saveTagInput.$refs.input.focus();
-				});
-			},
-			handleInputConfirm2() {
-				let inputValue2 = this.inputValue2;
-				if (inputValue2) {
-				this.addForm.signno.push(inputValue2);
-				}
-				this.inputVisible2 = false;
-				this.inputValue2 = '';
-			},
-
-			selsChange: function (sels) {
-				this.sels = sels;
-			},
-			
-			
 			
 			//批量删除
 			batchRemove: function () {
 				var _this = this;
-				var stuids = this.sels.map(item => '\"'+item.stuid+'\"').toString();
-				stuids = '['+stuids+']';
+				var ids = this.sels.map(item => '\"'+item.id+'\"').toString();
+				ids = '['+ids+']';
 				this.$confirm('确认删除选中记录吗？', '提示', {
 					type: 'warning'
 				}).then(() => {
 					//this.listLoading = true;
 					//NProgress.start();
-					let para = { stuid: stuids };
-					console.log(para);
-					axios.get('http://120.79.12.163/studelete',{params:para})
+					let para = { id: ids };
+					axios.get('http://120.79.12.163/signdelete',{params:para})
 					.then(function (response) {
-						console.log(response);
 						var d = response.data;
 						_this.listLoading = false;
 						//NProgress.done();
@@ -559,6 +530,10 @@
 		},
 		mounted() {
 			this.getsign(0);
+			this.drawCharts();
+		},
+		updated(){
+			this.drawCharts();
 		}
 	}
 
@@ -612,6 +587,9 @@
 	}
 	/*导入部分*/
 	.el-upload__tip{
+	}
+	.importexcel{
+		position: absolute;
 	}
 	
 	
