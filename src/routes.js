@@ -61,13 +61,13 @@ export default new Router({
             iconCls: 'el-icon-edit-outline',
             // 懒加载
             component : resolve => require(['./views/ordadmin-view/Newsign.vue'],resolve)
-        },/*{
+        },{
             path : '/currentsign',
             name: '当期签到管理',
             iconCls: 'el-icon-tickets',
             // 懒加载
             component : resolve => require(['./views/ordadmin-view/Currentsign.vue'],resolve)
-        },*/{
+        },{
             path : '/historysign',
             name: '已发布的签到',
             iconCls: 'el-icon-date',

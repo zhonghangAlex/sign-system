@@ -1,21 +1,20 @@
 <template>
     <section class="chart-container datastatistics">
         <center>
-            <el-select v-model="value" placeholder="请选择您要查看的签到域" @change="pickchange()" style="margin-top:30px;width:400px;">
+            <el-select v-model="value" placeholder="请选择您要查看的签到域" @change="pickchange()" style="margin-top:30px;width:200px;">
                 <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
+             <el-date-picker @change="timechange()" value-format="yyyy-MM-dd HH:mm:ss" v-model="value_time" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
         </center>
-        <el-button  type="primary" style="right:30px;position:absolute;margin-top:-40px;" >数据导出</el-button>
+        <el-button  type="primary" @click.native="exceldownload()" style="right:30px;position:absolute;margin-top:-40px;" >数据导出</el-button>
         <el-row>
             <el-col :span="24">
-                <center><div id="chartTable" style="width:100%;height:400px;border-radius:20px;overflow-y:yes;overflow-y:auto;"></div></center>
+                <div id="chartPie" style="width:100%; height:500px;"></div>
             </el-col>
-            <el-col :span="12">
-                <div id="chartLine" style="width:100%;height:400px;"></div>
-            </el-col>
-            <el-col :span="12">
-                <div id="chartPie" style="width:100%; height:400px;"></div>
-            </el-col>
+            <el-col :span="24">
+                <!-- <div style="overflow-y:yes;overflow-y:auto;height:400px;"> -->
+                <center><div id="chartTable" style="width:100%;height:1400px;"></div></center>
+            </el-col><br>
         </el-row>
     </section>
 </template>
@@ -31,41 +30,59 @@
                 chartBar: null,
                 chartLine: null,
                 chartPie: null,
-
+                
                 //选择签到加载
                 options: [],
-                value:'信管16级',
+                value:'',
+                //选择加载时间段
+                value_time:'',
+                starttime:'',
+                endtime:'',
                 //状态点阵图
                 student:[],
+                table_time:[],
                 status_position:[],
                 //折线图数据存储
                 total:'',
-                linetime:[],
-                linedata:[],
+                linetime:["签到情况"],
+                linedata:["签到成功的人数"],
+                linedatafail:["未签到人数"]  
+
 
             }
         },
 
         methods: {
+            timechange(){
+                this.starttime = this.value_time[0];
+                this.endtime = this.value_time[1];
+                this.getLinedata()
+                this.getTabledata()
+            },
+            exceldownload(){
+                var _this = this;
+                window.open('http://120.79.12.163/mallrecordexport?groupname='+_this.value+'&starttime='+_this.starttime+'&endtime='+_this.endtime)
+            },
             pickchange(){
                 this.getLinedata()
                 this.getTabledata()
             },
             getLinedata(){
                 var _this = this;
-                axios.get('http://120.79.12.163/msignareacount?signarea='+_this.value)
+                axios.get('http://120.79.12.163/msignareacount?signarea='+_this.value+'&starttime='+_this.starttime+'&endtime='+_this.endtime)
                 .then(function (response) {
-                    
+                    _this.linedata = [];
+                    _this.linetime = [];
                     for(var i=0; i<response.data.record.length; i++){
-                        _this.linetime[i] = response.data.record[i].endtime;
-                        _this.linedata[i] = response.data.record[i].number;
+                        _this.linetime[i+1] = response.data.record[i].endtime;
+                        _this.linedata[i+1] = response.data.record[i].number;
+                        _this.linedatafail[i+1] = response.data.total-response.data.record[i].number;
                     }
-                    
                     if(response.data.record.length==0){
                         _this.linedata = [];
                         _this.linetime = [];
                     }
-                    _this.drawLineChart();
+                    _this.drawPieChart();
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -73,28 +90,36 @@
             },
             getTabledata(){
                 var _this = this;
-                axios.get('http://120.79.12.163/mgrouprecord?signarea='+_this.value)
+                axios.get('http://120.79.12.163/mgrouprecord?signarea='+_this.value+'&starttime='+_this.starttime+'&endtime='+_this.endtime)
                 .then(function (response) {
                     _this.student = [];
-                    for(var i=0; i<response.data.student.length; i++){
-                        _this.student[i] = response.data.student[i].name;
-                    }
-                    
+                    _this.status_position = [];
+                    _this.table_time = [];
                     if(response.data.student.length==0){
                         _this.student = ["暂无学生数据"];
+                    }else{
+                        var plength = response.data.student[0].time.length;
+                        for(var i=0; i<response.data.student.length; i++){
+                            _this.student[i] = response.data.student[i].name;
+                            for(var j=0; j<response.data.student[0].time.length; j++){
+                                _this.status_position[i*plength+j] = response.data.student[i].time[j];
+                            }
+                        }
+                        for(var k=0; k<plength; k++){
+                            _this.table_time[k] = '第'+(k+1)+'次';  
+                        }
+                        
                     }
                     _this.drawTableChart();
-                    
-                    
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
             },
+            
             drawTableChart(){
                 var _this = this;
-                var times = [];
-                var data = [[0,0,0],[0,1,0],[0,2,0],[0,3,0],[0,4,0],[0,5,0],[0,6,0],[0,7,0],[0,8,0],[0,9,0],[0,10,0],[0,11,2],[0,12,4],[0,13,1],[0,14,1],[0,15,3],[0,16,4],[0,17,6],[0,18,4],[0,19,4],[0,20,3],[0,21,3],[0,22,2],[0,23,5],[1,0,7],[1,1,0],[1,2,0],[1,3,0],[1,4,0],[1,5,0],[1,6,0],[1,7,0],[1,8,0],[1,9,0],[1,10,5],[1,11,2],[1,12,2],[1,13,6],[1,14,9],[1,15,11],[1,16,6],[1,17,7],[1,18,8],[1,19,12],[1,20,5],[1,21,5],[1,22,7],[1,23,2],[2,0,1],[2,1,1],[2,2,0],[2,3,0],[2,4,0],[2,5,0],[2,6,0],[2,7,0],[2,8,0],[2,9,0],[2,10,3],[2,11,2],[2,12,1],[2,13,9],[2,14,8],[2,15,10],[2,16,6],[2,17,5],[2,18,5],[2,19,5],[2,20,7],[2,21,4],[2,22,2],[2,23,4],[3,0,7],[3,1,3],[3,2,0],[3,3,0],[3,4,0],[3,5,0],[3,6,0],[3,7,0],[3,8,1],[3,9,0],[3,10,5],[3,11,4],[3,12,7],[3,13,14],[3,14,13],[3,15,12],[3,16,9],[3,17,5],[3,18,5],[3,19,10],[3,20,6],[3,21,4],[3,22,4],[3,23,1],[4,0,1],[4,1,3],[4,2,0],[4,3,0],[4,4,0],[4,5,1],[4,6,0],[4,7,0],[4,8,0],[4,9,2],[4,10,4],[4,11,4],[4,12,2],[4,13,4],[4,14,4],[4,15,14],[4,16,12],[4,17,1],[4,18,8],[4,19,5],[4,20,3],[4,21,7],[4,22,3],[4,23,0],[5,0,2],[5,1,1],[5,2,0],[5,3,3],[5,4,0],[5,5,0],[5,6,0],[5,7,0],[5,8,2],[5,9,0],[5,10,4],[5,11,1],[5,12,5],[5,13,10],[5,14,5],[5,15,7],[5,16,11],[5,17,6],[5,18,0],[5,19,5],[5,20,3],[5,21,4],[5,22,2],[5,23,0],[6,0,1],[6,1,0],[6,2,0],[6,3,0],[6,4,0],[6,5,0],[6,6,0],[6,7,0],[6,8,0],[6,9,0],[6,10,1],[6,11,0],[6,12,2],[6,13,1],[6,14,3],[6,15,4],[6,16,0],[6,17,0],[6,18,0],[6,19,0],[6,20,1],[6,21,2],[6,22,2],[6,23,6]];
+                var data = _this.status_position;
                 data = data.map(function (item) {
                     return [item[1], item[0], item[2] || '-'];
                 });
@@ -105,12 +130,14 @@
                     },
                     animation: false,
                     grid: {
-                        height: '90%',
+                        top:'2%',
+                        height: '93%',
                         y: '10%'
                     },
                     xAxis: {
                         type: 'category',
-                        data: times,
+                        data: _this.table_time,
+                        position:'top',
                         splitArea: {
                             show: true
                         }
@@ -120,6 +147,12 @@
                         data: _this.student,
                         splitArea: {
                             show: true
+                        },
+                        axisLine:{
+                            lineStyle:{
+                                //width:5,
+                                //color:'#2a578b'
+                            }//坐标轴线的属性设置
                         }
                     },
                     visualMap: {
@@ -127,7 +160,7 @@
                         min: 1,
                         max: 2,
                         splitNumber: 2,
-                        color: ['#f56c6c','#67c23a'],
+                        color: ['#2ca778','#c23531'],
                         textStyle: {
                             color: '#444'
                         },
@@ -153,25 +186,14 @@
                     }]
                 });
             },
-            drawLineChart() {
+            drawPieChart() {
                 var _this = this;
-                
-                this.chartLine = echarts.init(document.getElementById('chartLine'));
-                this.chartLine.setOption({
-                    title: {
-                        text: _this.value+'历次签到人数统计'
-                    },
+                this.chartPie = echarts.init(document.getElementById('chartPie'));
+                this.chartPie.setOption({
+                    legend: {},
                     tooltip: {
-                        trigger: 'axis'
-                    },
-                    legend: {
-                        data: [ '历次实到人数']
-                    },
-                    grid: {
-                        left: '2%',
-                        right:'31',
-                        bottom: '3%',
-                        containLabel: true
+                        trigger: 'axis',
+                        showContent: false
                     },
                     toolbox: {
                         show: true,
@@ -179,21 +201,20 @@
                             dataZoom: {
                                 yAxisIndex: 'none'
                             },
-                            dataView: {readOnly: false},
                             magicType: {type: ['line', 'bar']},
                             restore: {},
                             saveAsImage: {}
                         }
                     },
+                    dataset: {
+                        source: [
+                            _this.linetime,
+                            _this.linedata,
+                            _this.linedatafail
+                        ]
+                    },
                     xAxis: {
                         type: 'category',
-                        boundaryGap: false,
-                        data: _this.linetime,
-                        /*
-                        axisLabel:{  
-                            interval:0,//横轴信息全部显示  
-                            rotate:-20,//-30度角倾斜显示  
-                        } */
                         axisLabel : {//坐标轴刻度标签的相关设置。
                             formatter : function(params){
                             var newParamsName = "";// 最终拼接成的字符串
@@ -230,63 +251,49 @@
                             }
                         },
                     },
-                    yAxis: {
-                        type: 'value'
-                    },
+                    yAxis: {gridIndex: 0},
+                    grid: {top: '55%'},
                     series: [
+                        {type: 'line',color:'#2ca778', smooth: true, seriesLayoutBy: 'row'},
+                        {type: 'line',color:'#c23531', smooth: true, seriesLayoutBy: 'row'},
                         {
-                            name: '实到人数',
-                            type: 'line',
-                            stack: '总量',
-                            data: _this.linedata
-                        }
-                    ]
-                });
-            },
-            drawPieChart() {
-                var _this = this;
-                this.chartPie = echarts.init(document.getElementById('chartPie'));
-                this.chartPie.setOption({
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: "{a} <br/>{b}: {c} ({d}%)"
-                    },
-                    legend: {
-                        orient: 'vertical',
-                        x: 'left',
-                        data:['实到人数','缺勤人数']
-                    },
-                    series: [
-                        {
-                            name:'详情信息',
-                            type:'pie',
-                            radius: ['50%', '70%'],
-                            avoidLabelOverlap: false,
+                            type: 'pie',
+                            id: 'pie',
+                            radius: ['20%', '30%'],
+                            center: ['50%', '25%'],
+                            color:['#2ca778','#c23531'],
                             label: {
-                                normal: {
-                                    show: false,
-                                    position: 'center'
-                                },
-                                emphasis: {
-                                    show: true,
-                                    textStyle: {
-                                        fontSize: '30',
-                                        fontWeight: 'bold'
-                                    }
-                                }
+                                formatter: '{b}: {@2012} ({d}%)'
                             },
-                            labelLine: {
-                                normal: {
-                                    show: false
-                                }
-                            },
-                            data:[
-                                {value:25, name:'实到人数'},
-                                {value:36, name:'缺勤人数'}
-                            ]
+                            encode: {
+                                itemName: '签到情况',
+                                value: '2012',
+                                tooltip: '2012'
+                            }
                         }
                     ]
                 });
+                this.chartPie.on('updateAxisPointer', function (event) {
+                    var xAxisInfo = event.axesInfo[0];
+                    if (xAxisInfo) {
+                        var dimension = xAxisInfo.value + 1;
+                        _this.chartPie.setOption({
+                            series: {
+                                id: 'pie',
+                                label: {
+                                    formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+                                },
+                                encode: {
+                                    value: dimension,
+                                    tooltip: dimension
+                                }
+                            }
+                        });
+                    }
+                });
+                //this.chartPie.setOption(option);
+
+            
             },/*
             drawCharts() {
                 this.drawLineChart();
@@ -300,16 +307,14 @@
             .then(function (response) {
                 _this.options = response.data.signarea;
                 _this.value = response.data.signarea[0].value;
+                _this.getLinedata();
+                _this.getTabledata();
             })
             .catch(function (error) {
                 console.log(error);
             });
         },
         mounted: function () {
-            //this.getsignareapick();
-            this.getLinedata();
-            this.getTabledata();
-            //this.drawCharts();
         },
         updated: function () {
         }
