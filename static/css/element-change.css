@@ -87,7 +87,12 @@ padding: 0 35px;
 } */
 .gap_container .el-switch__label{
     color: white;
-  }
+}
 .gap_container .el-switch__label.is-active{
     color:white;
+}
+
+/*全部tag样式控制*/
+.el-tag + .el-tag {
+    margin-left: 10px;
 }

@@ -4,6 +4,12 @@
             <el-form-item label="签到域编号" >
                 <el-input v-model="signcurrent.groupname" :disabled='true'  style="width:400px;"></el-input>
             </el-form-item>
+            <el-form-item label="开始时间" >
+                <el-input v-model="signcurrent.starttime" :disabled='true'  style="width:400px;"></el-input>
+            </el-form-item>
+            <el-form-item label="截止时间" >
+                <el-input v-model="signcurrent.endtime" :disabled='true'  style="width:400px;"></el-input>
+            </el-form-item>
             <el-form-item label="学生查询">
                 <el-input v-model="signcurrentfilters.search"  placeholder="输入关键字查询" style="width:250px;"></el-input>
             </el-form-item>

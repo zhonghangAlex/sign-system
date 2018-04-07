@@ -245,6 +245,7 @@
 					_this.signdetail = response.data;
 					_this.signsuccesscount = response.data.successcount;
 					_this.signfailcount = parseInt(response.data.totalcount)-parseInt(response.data.successcount);
+					_this.drawCharts();
 					if(response.data.totalcount&&response.data.successcount){
 						_this.labelsuccess = '签到成功的学生（'+_this.signsuccesscount+'人 )';
 						_this.labelfail = '未签到的学生（'+_this.signfailcount+'人 )';
@@ -268,7 +269,6 @@
 						{
 							_this.labelsuccess = '无对应学生';
 						}
-						
 					}
 				})
 				.catch(function (error) {
@@ -530,11 +530,8 @@
 		},
 		mounted() {
 			this.getsign(0);
-			this.drawCharts();
 		},
-		updated(){
-			this.drawCharts();
-		}
+		
 	}
 
 </script>

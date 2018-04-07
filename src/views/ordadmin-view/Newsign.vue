@@ -11,7 +11,7 @@
     </el-select>
     -->
     
-    <el-steps :active="4" finish-status="success" simple style="margin-top: 20px;border:3px solid #658aac; border-radius:50px;">
+    <el-steps :active="step_index" finish-status="success" simple style="margin-top: 20px;border:3px solid #658aac; border-radius:50px;">
       <el-step title="步骤 1" ></el-step>
       <el-step title="步骤 2" ></el-step>
       <el-step title="步骤 3" ></el-step>
@@ -163,6 +163,8 @@ export default {
   name: 'Newsign',
   data () {
     return {
+        //步骤条相关
+        step_index:1,
         //选择已有签到域
         options: [],
         value: '',
@@ -375,6 +377,7 @@ export default {
   },
   mounted(){
     //初始化swiper
+    var _this = this;
     var mySwiper = new Swiper ('.swiper-container', {
       direction: 'horizontal',
       loop: false,
@@ -394,7 +397,15 @@ export default {
     
     //上方托条的拉动
     //初始化签到域选择
+      on:{
+        slideChangeTransitionEnd:function(){
+          var swiperindex = this.activeIndex;
+          _this.step_index = swiperindex;
+        },
+      },
     });
+    
+    
     this.getsignareapick(); 
     this.getsignareplace();
     this.getsignarearoom();

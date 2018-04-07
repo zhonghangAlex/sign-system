@@ -7,11 +7,12 @@
 				<img src="../../static/img/logo-l.png" class="syslogo"/>
 			</el-col>
 			<el-col :span="10" class="userinfo" >
-				<span class=" userinfo-inner"> {{sysUserName}}欢迎登录，尊敬的管理员</span>
+				<span class=" userinfo-inner"> {{sysUserName}}Welcome&nbsp;尊敬的{{ ordname }}老师</span>
 				<el-dropdown trigger="hover" >
                     <div class=" el-dropdown-link userinfo-icon"></div>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item>系统消息</el-dropdown-item>
+                        <el-dropdown-item @click.native="handleinfo">我的信息</el-dropdown-item>
                         <el-dropdown-item @click.native="handlemodel">模板下载</el-dropdown-item>
 						<el-dropdown-item @click.native="handlepsdchange">密码修改</el-dropdown-item>
 						<el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
@@ -24,7 +25,7 @@
 				<!--导航菜单-->
 				<el-menu :default-active="$route.path" class="el-menu-vertical-demo"  unique-opened router  >
 					<template>
-							<el-menu-item v-for="(item,index) in $router.options.routes[2].children" :index="item.path" :key="item.path" ><i :class="item.iconCls"></i>{{item.name}}</el-menu-item>
+							<el-menu-item v-for="item in $router.options.routes[2].children" :index="item.path" :key="item.path" ><i :class="item.iconCls"></i>{{item.name}}</el-menu-item>
                     </template>
 				</el-menu>
 			</aside>
@@ -83,6 +84,26 @@
                                 <el-button type="primary" @click="psdchangeReset('psdFormRules')">重置</el-button>
                             </div>
                         </el-dialog>
+                        <!-- 我的信息 -->
+                        <el-dialog title="我的信息" width="50%" :visible.sync ="myinfoVisible" :close-on-click-modal="false" >
+                            <el-form v-model="ordmyinfo" label-width="150px"   class="demo-ruleForm" >
+                                <el-form-item  >
+                                    <center><div style="width:150px;height:150px;border-radius:50%;background:url(../../static/img/boy.png);background-size:cover;margin-left:-100px;"></div></center>
+                                </el-form-item>
+                                <el-form-item label="管路员工号" >
+                                    <el-input  v-model="ordmyinfo.workid" auto-complete="off"  style="width:400px;"></el-input>
+                                </el-form-item>
+                                <el-form-item label="姓名" >
+                                    <el-input  v-model="ordmyinfo.name" auto-complete="off"  style="width:400px;"></el-input>
+                                </el-form-item>
+                                <el-form-item label="单位">
+                                    <el-input  v-model="ordmyinfo.workplace" auto-complete="off"  style="width:400px;"></el-input>
+                                </el-form-item>
+                                <el-form-item label="电话">
+                                    <el-input v-model="ordmyinfo.phone" auto-complete="off" style="width:400px;"></el-input>
+                                </el-form-item>
+                            </el-form>
+                        </el-dialog>
 					</el-col>
 				</div>
 			</section>
@@ -93,154 +114,177 @@
 <script>
 import axios from 'axios'
 export default {
-  data() {
-    var validatePass0 = (rule, value, callback) => {
-        if (value === '') {
-            callback(new Error('请输入旧密码'));
-        }else{
-            callback();
-        }
-    };
-    var validatePass1 = (rule, value, callback) => {
-        if (value === '') {
-            callback(new Error('请输入新密码'));
-        } else {
-            if (this.psdFormRules.checkPass !== '') {   
-                this.$refs.psdFormRules.validateField('checkPass');
+    data() {
+        var validatePass0 = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请输入旧密码'));
+            }else{
+                callback();
             }
-            callback();
-        }
-    };
-    var validatePass2 = (rule, value, callback) => {
-        if (value === '') {
-            callback(new Error('请再次输入新密码'));
-        } else if (value !== this.psdFormRules.newPass) {
-            callback(new Error('两次输入密码不一致!'));
-        } else {
-            callback();
-        }
-    };
-    return {
-        sysName: "高校智能定位签到系统",
-        sysUserName: "",
-        sysUserAvatar: "",
-        syslogo:"../../static/img/logo-l.png",
-        form: {
-            name: "",
-            region: "",
-            date1: "",
-            date2: "",
-            delivery: false,
-            type: [],
-            resource: "",
-            desc: ""
-        },
-
-        //导入模板集中下载
-        modeldownloadVisible:false,
-
-        //密码修改界面相关
-        psdchangeVisible:false,
-        psdFormRules:{
-            oldPass:'',
-            newPass:'',
-            checkPass:''
-        },
-        psdRules: {
-            oldPass: [
-                { validator: validatePass0, trigger: 'blur' }
-            ],
-            newPass: [
-                { validator: validatePass1, trigger: 'blur' }
-            ],
-            checkPass: [
-                { validator: validatePass2, trigger: 'blur' }
-            ]
-        }
-
-    };
-  },
-  methods: {
-    onSubmit() {
-        console.log('submit!');
-    },
-    //退出登录
-    logout: function() {
-        var _this = this;
-        this.$confirm("确认退出吗?", "提示", {
-            //type: 'warning'
-        })
-        .then(() => {
-            axios.get('http://120.79.12.163/exitlogin',{//http://120.79.12.163/getsignarea
-                params: {
+        };
+        var validatePass1 = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请输入新密码'));
+            } else {
+                if (this.psdFormRules.checkPass !== '') {   
+                    this.$refs.psdFormRules.validateField('checkPass');
                 }
+                callback();
+            }
+        };
+        var validatePass2 = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请再次输入新密码'));
+            } else if (value !== this.psdFormRules.newPass) {
+                callback(new Error('两次输入密码不一致!'));
+            } else {
+                callback();
+            }
+        };
+        return {
+            
+            sysName: "高校智能定位签到系统",
+            sysUserName: "",
+            sysUserAvatar: "",
+            syslogo:"../../static/img/logo-l.png",
+            form: {
+                name: "",
+                region: "",
+                date1: "",
+                date2: "",
+                delivery: false,
+                type: [],
+                resource: "",
+                desc: ""
+            },
+
+            //导入模板集中下载
+            modeldownloadVisible:false,
+
+            //密码修改界面相关
+            psdchangeVisible:false,
+            psdFormRules:{
+                oldPass:'',
+                newPass:'',
+                checkPass:''
+            },
+            psdRules: {
+                oldPass: [
+                    { validator: validatePass0, trigger: 'blur' }
+                ],
+                newPass: [
+                    { validator: validatePass1, trigger: 'blur' }
+                ],
+                checkPass: [
+                    { validator: validatePass2, trigger: 'blur' }
+                ]
+            },
+            //我的信息相关
+            myinfoVisible:false,
+            ordname:'',
+            ordmyinfo:{
+
+            }
+        };
+    },
+    methods: {
+        initinfo(){
+            
+        },
+        onSubmit() {
+            console.log('submit!');
+        },
+        //退出登录
+        logout: function() {
+            var _this = this;
+            this.$confirm("确认退出吗?", "提示", {
+                //type: 'warning'
             })
             .then(() => {
-               
+                axios.get('http://120.79.12.163/exitlogin',{//http://120.79.12.163/getsignarea
+                    params: {
+                    }
+                })
+                .then(() => {
+                
+                })
+                .catch(() => {});
+                _this.$router.push("/");
             })
-            .catch(() => {});
-             _this.$router.push("/");
-        })
-    },
-    //显示批量导入界面
-    handlemodel(){
-        this.modeldownloadVisible = true;
-    },
-    //显示密码修改界面
-    handlepsdchange(){
-        this.psdchangeVisible = true;
-    },
-    psdchangeSubmit(){
-        var _this = this;
-        this.$refs.psdFormRules.validate((valid) => {
-            if(valid){
-                this.$confirm('确认修改密码吗?', '提示', {
-                    type: 'warning'
-                }).then(() => {
-                    var params = new URLSearchParams()
-                    params.append('oldpassword',_this.psdFormRules.oldPass)
-                    params.append('newpassword',_this.psdFormRules.newPass)
-                    axios.post('http://120.79.12.163/setpassword',params)
-                    .then(function (response) {
-                        console.log(response);
-                        var d = response.data;
+        },
+        //显示我的信息界面
+        handleinfo(){
+            this.myinfoVisible = true;
+        },
+        //显示批量导入界面
+        handlemodel(){
+            this.modeldownloadVisible = true;
+        },
+        //显示密码修改界面
+        handlepsdchange(){
+            this.psdchangeVisible = true;
+        },
+        psdchangeSubmit(){
+            var _this = this;
+            this.$refs.psdFormRules.validate((valid) => {
+                if(valid){
+                    this.$confirm('确认修改密码吗?', '提示', {
+                        type: 'warning'
+                    }).then(() => {
+                        var params = new URLSearchParams()
+                        params.append('oldpassword',_this.psdFormRules.oldPass)
+                        params.append('newpassword',_this.psdFormRules.newPass)
+                        axios.post('http://120.79.12.163/setpassword',params)
+                        .then(function (response) {
+                            console.log(response);
+                            var d = response.data;
+                            
+                            //NProgress.done();
+                            if(d.status==1){
+                                _this.$message({
+                                    message: d.message,
+                                    type: 'success'
+                                });
+                                _this.psdchangeVisible = false;
+                                _this.$router.push("/");
+                            }
                         
-                        //NProgress.done();
-                        if(d.status==1){
+                            if(d.status==0)
                             _this.$message({
                                 message: d.message,
-                                type: 'success'
+                                type: 'error'
                             });
-                            _this.psdchangeVisible = false;
-                            _this.$router.push("/");
-                        }
-                    
-                        if(d.status==0)
-                        _this.$message({
-                            message: d.message,
-                            type: 'error'
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            _this.$message({
+                                message: "数据请求失败",
+                                type: 'error'
+                            });
                         });
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                        _this.$message({
-                            message: "数据请求失败",
-                            type: 'error'
-                        });
+                    }).catch(() => {
+
                     });
-                }).catch(() => {
-
-                });
-            }
+                }
+                
+            });
+        },
+        psdchangeReset(){
+            this.$refs.psdFormRules.resetFields();
             
-        });
+        }
     },
-    psdchangeReset(){
-          this.$refs.psdFormRules.resetFields();
-        
+    mounted(){
+        var _this = this;
+        axios.get('http://120.79.12.163/getcurrentinfo')
+        .then(function (response) {
+            _this.ordname = response.data.name;
+            _this.ordmyinfo = response.data;
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     }
-
-  }
 };
 </script>
 
