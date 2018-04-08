@@ -20,21 +20,7 @@ Vue.use(VueCookies)
 Vue.component('Bmap', Bmap)
 axios.defaults.withCredentials=true;
 
-/*
-router.beforeEach((to, from, next) => {
-  //NProgress.start();
-  var if_state = true;
-  if (from.path == '/login') {
-    if_state = false;
-  }
-  if (if_state && to.path != '/login') {
-    next({ path: '/login' })
-  } else {
-    next()
-  }
-})
-*/
-/* eslint-disable no-new */
+
 new Vue({
   el: '#app',
   router,

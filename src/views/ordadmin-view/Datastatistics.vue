@@ -12,7 +12,6 @@
                 <div id="chartPie" style="width:100%; height:500px;"></div>
             </el-col>
             <el-col :span="24">
-                <!-- <div style="overflow-y:yes;overflow-y:auto;height:400px;"> -->
                 <center><div id="chartTable" v-bind:style="{width:ewhith,height:etableheight}"></div></center>
             </el-col><br>
         </el-row>
@@ -43,6 +42,7 @@
                 student:[],
                 table_time:[],
                 status_position:[],
+                table_stuid:[],
                 ewhith:'75%',
                 etableheight:'',
                 de_starttime:[],
@@ -52,8 +52,6 @@
                 linetime:["签到情况"],
                 linedata:["签到成功的人数"],
                 linedatafail:["未签到人数"]  
-
-
             }
         },
 
@@ -95,6 +93,7 @@
                         _this.linedatafail = [];
                     }
                     _this.drawPieChart();
+                    _this.chartTable.resize();
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -116,8 +115,10 @@
 
                         for(var i=0; i<response.data.student.length; i++){
                             _this.student[i] = response.data.student[i].name;
+                            _this.table_stuid[i] = response.data.student[i].stuid;
                             for(var j=0; j<response.data.student[0].time.length; j++){
                                 _this.status_position[i*plength+j] = response.data.student[i].time[j];
+                                
                             }
                         }
                         for(var k=0; k<plength; k++){
@@ -125,11 +126,11 @@
                             _this.de_starttime[k] = response.data.sign[k].starttime;  
                             _this.de_endtime[k] = response.data.sign[k].endtime;  
                         }
-                        console.log(_this.de_starttime);
                             
                         
                     }
                     _this.drawTableChart();
+                    _this.chartTable.resize();
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -147,11 +148,6 @@
                 var hours = _this.table_time;
                 var days = _this.student;
                 var data = _this.status_position;
-                // data = data.map(function (item) {
-                //     return [item[1], item[0], item[2]];
-                // });
-
-                
                 data = data.map(function (item) {
                     return [item[1], item[0], item[2]];
                 });
@@ -167,7 +163,7 @@
                     tooltip: {
                         position: 'top',
                         formatter: function (params) {
-                            return  _this.student[params.value[1]] + _this.table_time[params.value[0]]+_this.changestatus(params.value[2])+'<br>'+'开始时间：'+_this.de_starttime[params.value[0]]+'<br>'+'截止时间：'+_this.de_endtime[params.value[0]] ;
+                            return  _this.table_time[params.value[0]]+_this.changestatus(params.value[2])+'<br>'+_this.table_stuid[params.value[1]]+'&nbsp;'+_this.student[params.value[1]]+'<br>'+'开始时间：'+_this.de_starttime[params.value[0]]+'<br>'+'截止时间：'+_this.de_endtime[params.value[0]] ;
                         }
                     },
                     grid: {
@@ -197,7 +193,12 @@
                         data: days,
                         axisLine: {
                             show: false
-                        }
+                        },
+                        axisLabel: {        
+                            show: true,
+                            margin:21
+                            
+                        },
                     },
                     visualMap: {
                         type:'piecewise',
@@ -359,12 +360,12 @@
                 _this.chartTable.resize();
                 _this.chartPie.resize();
             };
-            //window.onclick = function(){
+            // window.onclick = function(){
             //    _this.chartTable.resize();
-            //};
-            window.onmousemove = function(){
-                _this.chartTable.resize();
-             };
+            // };
+            // window.onmousemove = function(){
+            //     _this.chartTable.resize();
+            //  };
         },
         updated: function () {
         }

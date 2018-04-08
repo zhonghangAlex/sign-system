@@ -3,10 +3,6 @@
         <form>
             <div style=" margin:auto;width:95%;height:500px;border:2px solid gray; margin-bottom:10px;" id="container"></div>
             <h3 style="color: red;">介绍：①可点击地图确定签到地点；②可通过下方经度，纬度，半径查询确定签到地点</h3>
-            <!--
-            <label>输入地点：</label>
-            <input id="where" name="where" type="text" placeholder="请输入地址">
-            input id="but" type="button" value="地图查找" onClick="sear(document.getElementById('where').value);" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
             经度：
             <input id="lonlat" name="lonlat" type="number" value="114.339972" maxlength="10">
             纬度：

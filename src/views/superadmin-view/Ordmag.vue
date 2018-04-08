@@ -14,13 +14,6 @@
 				</el-form-item>
 				<el-form-item style="float:right; margin-right:0px;">
 					<el-button  type="primary" @click="handleimport" >Excel批量导入</el-button>
-					<!--
-					<el-upload  class="upload-demo" :limit=1  ref="upload" method="post" action="http://120.79.12.163/stufile"  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :on-preview="handlePreview"  :on-remove="handleRemove" :on-success="handleSuccess" :on-error="handleError" :on-progress="handlePro"  :file-list="fileList" :data="uploadform"  :auto-upload="false">
-						<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-						<el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
-						<div slot="tip" class="el-upload__tip">只能上传xls/xlsx文件</div>
-					</el-upload>
-					-->
 				</el-form-item>
 			</el-form>
 		</el-col>
@@ -51,10 +44,6 @@
 			</el-table-column>
 			<el-table-column prop="name" label="姓名" min-width="120" align="center" sortable>
 			</el-table-column>
-			<!--
-			<el-table-column prop="sex" label="性别" width="100" align="center" :formatter="formatSex" sortable>
-			</el-table-column>
-			-->
 			<el-table-column prop="workid" label="工号" min-width="140" align="center" sortable>
 			</el-table-column>
 			<el-table-column prop="workplace" label="工作单位" min-width="100" align="center" sortable>
@@ -69,7 +58,7 @@
 				</template>
 			</el-table-column>
 			<el-table-column fixed="right" label="操作" width="250" align="center">
-				<template slot-scope="scope"><!--<template scope="scope">-->
+				<template slot-scope="scope">
 					<el-button class="resetpsd" type="danger" size="small" @click="handleresetpsd(scope.$index, scope.row)">重置密码</el-button>
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
@@ -82,7 +71,6 @@
 			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
 			<el-pagination class="pagebtn" :current-page="page" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" 
       :page-sizes="[5, 10, 15, 20]" :page-size="10" :total="parseInt(total)"  style="float:right;">
-			<!--<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">-->
 			</el-pagination>
 		</el-col>
 
@@ -152,12 +140,11 @@
 <script>
 	import axios from 'axios'
 	import util from '../../common/util'
-	//import NProgress from 'nprogress'
 	export default {
 		data() {
 			return {
 				//文件上传
-				//fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
+				
 				fileList: [],
 				limit:1,
 				uploadform:{
@@ -233,13 +220,10 @@
 				this.$refs.upload.submit();
 			},
 			handleRemove(file, fileList) {
-				console.log(file, fileList);
 			},
 			handlePreview(file) {
-				console.log(file);
 			},
 			handleSuccess(res, file, fileList){
-				console.log(res);
 				if(res.status==0){
 					this.$message({
 						message: res.message,
@@ -258,7 +242,6 @@
 				}
 			},
 			handleError(err, file, fileList){
-				
 			},
 			handlePro(event, file, fileList){
 			},
@@ -302,7 +285,6 @@
 					}
 				})
 				.then(function (response) {
-					console.log(response);
 					_this.total = response.data.count;
 					_this.users = response.data.users;
 					_this.listLoading = false;
@@ -326,10 +308,7 @@
 						}
 					})
 					.then(function (response) {
-						console.log(response);
 						var d = response.data;
-						
-						//NProgress.done();
 						if(d.status==1)
 						_this.$message({
 							message: d.message,
@@ -358,17 +337,14 @@
 				this.$confirm('确认删除该记录吗?', '提示', {
 					type: 'warning'
 				}).then(() => {
-					//this.listLoading = true;
 					axios.get('http://120.79.12.163/orddelete',{
 						params: {
 							workid: '['+'\"'+row.workid+'\"'+']',
 						}
 					})
 					.then(function (response) {
-						console.log(response);
 						var d = response.data;
 						
-						//NProgress.done();
 						if(d.status==1)
 						_this.$message({
 							message: d.message,
@@ -395,7 +371,6 @@
 			handleEdit: function (index, row) {
 				this.editFormVisible = true;
 				this.editForm = Object.assign({}, row);
-				console.log(this.editForm);
 			},
 			//显示新增界面
 			handleAdd: function () {
@@ -430,7 +405,6 @@
 							//para.signno 
 							axios.get('http://120.79.12.163/ordmodify',{params:para})
 							.then(function (response) {
-								console.log(response);
 								_this.editLoading = false;
 								//NProgress.done();
 								var d=response.data
@@ -483,9 +457,8 @@
 					if (valid) {
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
 							this.addLoading = true;
-							//NProgress.start();
 							let para = Object.assign({}, this.addForm);
-							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
+							
 							for(var i=0; i<para.signno.length; i++){
 								para.signno[i] ='\"'+para.signno[i]+'\"';
 							}
@@ -493,7 +466,6 @@
 							para.way = 1;
 							axios.get('http://120.79.12.163/ordmodify',{params:para})
 							.then(function (response) {
-								console.log(response);
 								var d = response.data;
 								_this.addLoading = false;
 								//NProgress.done();
@@ -552,16 +524,12 @@
 				this.$confirm('确认删除选中记录吗？', '提示', {
 					type: 'warning'
 				}).then(() => {
-					//this.listLoading = true;
-					//NProgress.start();
 					let para = { workid: workids };
-					console.log(para);
 					axios.get('http://120.79.12.163/orddelete',{params:para})
 					.then(function (response) {
 						console.log(response);
 						var d = response.data;
 						_this.listLoading = false;
-						//NProgress.done();
 						if(d.status==1)
 						_this.$message({
 							message: d.message,

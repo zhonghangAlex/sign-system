@@ -29,10 +29,6 @@
 			</el-table-column>
 			<el-table-column prop="sendtime" label="发布时间" width="200" align="center"  sortable>
 			</el-table-column>
-			<!--
-			<el-table-column prop="sex" label="性别" width="100" align="center" :formatter="formatSex" sortable>
-			</el-table-column>
-			-->
 			<el-table-column prop="starttime" label="签到开始时间" min-width="200" align="center" sortable>
 			</el-table-column>
 			<el-table-column prop="endtime" label="签到结束时间" min-width="200" align="center" sortable>
@@ -52,7 +48,7 @@
 			<el-table-column prop="dis" label="签到半径" min-width="100" align="center" sortable>
 			</el-table-column>
 			<el-table-column fixed="right" label="操作" width="250" align="center">
-				<template slot-scope="scope"><!--<template scope="scope">-->
+				<template slot-scope="scope">
 					<el-button type="danger" size="small"  @click="handledetailopen(scope.$index, scope.row,1)">详情</el-button>
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
@@ -65,7 +61,6 @@
 			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
 			<el-pagination class="pagebtn" :current-page="page" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" 
       :page-sizes="[5, 10, 15, 20]" :page-size="10" :total="parseInt(total)"  style="float:right;">
-			<!--<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">-->
 			</el-pagination>
 		</el-col>
 
@@ -136,11 +131,11 @@
 					<div id="chartPie" style="width:60%; height:350px;"></div>
 				</el-form-item>
 				<el-form-item :label="labelsuccess">
-					<el-tag  type="success" :key="tag.stuid" v-for="tag in signdetail.signsuccess"  :disable-transitions="false" >
+					<el-tag  type="success" @close="handlesuccessClose(index)" :key="tag.stuid" v-for="(tag,index) in signdetail.signsuccess" closable :disable-transitions="false" >
 						学号:&nbsp;{{tag.stuid}}&nbsp;&nbsp;姓名:&nbsp;{{tag.name}}</el-tag>
 				</el-form-item>
 				<el-form-item :label="labelfail">
-					<el-tag type="danger" :key="tag.stuid" v-for="tag in signdetail.signfail"  :disable-transitions="false"  >
+					<el-tag type="danger" @close="handlefailClose(index)" :key="tag.stuid" v-for="(tag,index) in signdetail.signfail" closable :disable-transitions="false"  >
 						学号:&nbsp;{{tag.stuid}}&nbsp;&nbsp;姓名:&nbsp;{{tag.name}}</el-tag>
 				</el-form-item>
 				<el-form-item label="详情导出">
@@ -234,6 +229,28 @@
 		methods: {
 			//详情相关
 			//显示页面并初始化数据
+			handlesuccessClose(index){
+				//mchangesignstatus
+				var _this = this;
+				axios.get('http://120.79.12.163/mchangesignstatus?signid='+_this.detailsaveid+'&stuid='+_this.signdetail.signsuccess[index].stuid)
+				.then(function (response) {
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+				this.handledetailopen();
+			},
+			handlefailClose(index){
+				//mchangesignstatus
+				var _this = this;
+				axios.get('http://120.79.12.163/mchangesignstatus?signid='+_this.detailsaveid+'&stuid='+_this.signdetail.signfail[index].stuid)
+				.then(function (response) {
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+				this.handledetailopen();
+			},
 			handledetailopen: function(index, row,x){
 				var _this = this;
 				_this.signdetailFormVisible = true;
@@ -496,14 +513,11 @@
 				this.$confirm('确认删除选中记录吗？', '提示', {
 					type: 'warning'
 				}).then(() => {
-					//this.listLoading = true;
-					//NProgress.start();
 					let para = { id: ids };
 					axios.get('http://120.79.12.163/signdelete',{params:para})
 					.then(function (response) {
 						var d = response.data;
 						_this.listLoading = false;
-						//NProgress.done();
 						if(d.status==1)
 						_this.$message({
 							message: d.message,
@@ -581,9 +595,6 @@
 		color: #fff;
 		background-color: #658aacab;
 		border-color: #658aacab;
-	}
-	/*导入部分*/
-	.el-upload__tip{
 	}
 	.importexcel{
 		position: absolute;

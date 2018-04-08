@@ -93,11 +93,6 @@
 				<el-form-item label="管理教师" >
 					<el-input v-model="detailsignarea.name" :disabled='true'  style="width:400px;"></el-input>
 				</el-form-item>
-				<!--
-				<el-form-item label="签到域内学生">
-					<el-input v-model="detailsignarea.studentsname" :disabled='true' style="width:400px;"></el-input>
-				</el-form-item>
-				-->
 				<el-form-item label="学生查询">
 					<el-input v-model="detailfilters.search"  placeholder="输入关键字查询" style="width:250px;"></el-input>
 				</el-form-item>
@@ -249,13 +244,10 @@
 				this.$refs.upload.submit();
 			},
 			handledetailRemove(file, fileList) {
-				console.log(file, fileList);
 			},
 			handledetailPreview(file) {
-				console.log(file);
 			},
 			handledetailSuccess(res, file, fileList){
-				console.log(res);
 				if(res.status==0){
 					this.$message({
 						message: res.message,
@@ -293,17 +285,14 @@
 				params.append('search',_this.detailfilters.search);
 				params.append('signno',_this.detailclicksend.signno);
 				params.append('workid',_this.detailclicksend.workid);
-				//axios.get('/api/getsignarea',{params:para}) //http://120.79.12.163/getareadetail
-				axios.post('http://120.79.12.163/getareadetail',//http://120.79.12.163/getareadetail
+
+				axios.post('http://120.79.12.163/getareadetail',
 					params
 				)
 				.then(function (response) {
-					console.log(response);
 					_this.detailtotal = response.data.detailsignarea.count;
-					//_this.detailsignarea = response.data.detailsignarea;
 					_this.detailsignarea = Object.assign({}, response.data.detailsignarea);
 					_this.listLoading = false;
-					console.log(_this.detailsignarea);
 				})
 				.catch(function (error) {
 					console.log(error);
@@ -338,7 +327,6 @@
 					if (inputValue) {
 						this.detailsignarea.studentsname.push(inputValue);
 					}
-					console.log(this.detailsignarea.studentsname)
 					this.inputVisible = false;
 					this.inputValue = '';
 				}
@@ -366,8 +354,6 @@
 					}
 					tmpareaname = tmpareaname.slice(1); 
 					para.studentsname = '['+tmpareaname+']';
-					//para.signno = '['+para.signno.toString()+']';
-					console.log(para.studentsname);
 					var params = new URLSearchParams()
 					params.append('signno',para.signno)
 					params.append('workid',para.workid)
@@ -376,7 +362,6 @@
 					.then(function (response) {
 						console.log(response);
 						_this.editLoading = false;
-						//NProgress.done();
 						var d=response.data
 						if(d.status==1)
 						_this.$message({
@@ -414,13 +399,10 @@
 				this.$refs.upload.submit();
 			},
 			handleRemove(file, fileList) {
-				console.log(file, fileList);
 			},
 			handlePreview(file) {
-				console.log(file);
 			},
 			handleSuccess(res, file, fileList){
-				console.log(res);
 				if(res.status==0){
 					this.$message({
 						message: res.message,
@@ -483,7 +465,6 @@
 					}
 				})
 				.then(function (response) {
-					console.log(response);
 					_this.total = response.data.count;
 					_this.signarea = response.data.signarea;
 					_this.listLoading = false;
@@ -509,7 +490,6 @@
 						}
 					})
 					.then(function (response) {
-						console.log(response);
 						var d = response.data;
 						
 						//NProgress.done();
@@ -552,10 +532,9 @@
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
 							this.addLoading = true;
 							let para = Object.assign({}, this.addForm);
-							//para.way = 1;
+					
 							axios.get('http://120.79.12.163/signareamodify',{params:para})
 							.then(function (response) {
-								console.log(response);
 								var d = response.data;
 								_this.addLoading = false;
 								if(d.status==1)
@@ -592,13 +571,10 @@
 					//this.listLoading = true;
 					//NProgress.start();
 					let para = { signno: signnos };
-					console.log(para);
 					axios.get('http://120.79.12.163/signareadelete',{params:para})
 					.then(function (response) {
-						console.log(response);
 						var d = response.data;
 						_this.listLoading = false;
-						//NProgress.done();
 						if(d.status==1)
 						_this.$message({
 							message: d.message,
@@ -618,11 +594,6 @@
 
 				});
 			},
-
-
-			
-
-
 		},
 		mounted() {
 			this.getsignareas(0);

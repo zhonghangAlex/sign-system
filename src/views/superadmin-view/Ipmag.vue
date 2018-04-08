@@ -46,10 +46,6 @@
 			</el-table-column>
 			<el-table-column prop="place" label="地点" min-width="120" align="center" sortable>
 			</el-table-column>
-			<!--
-			<el-table-column prop="sex" label="性别" width="100" align="center" :formatter="formatSex" sortable>
-			</el-table-column>
-			-->
 			<el-table-column prop="room" label="编号" min-width="140" align="center" sortable>
 			</el-table-column>
 			<el-table-column prop="ip" label="IP地址" min-width="150" align="center" sortable>
@@ -77,7 +73,6 @@
 			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
 			<el-pagination class="pagebtn" :current-page="page" background layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" 
       :page-sizes="[5, 10, 15, 20]" :page-size="10" :total="parseInt(total)"  style="float:right;">
-			<!--<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">-->
 			</el-pagination>
 		</el-col>
 
@@ -88,7 +83,7 @@
 					<el-input v-model="editForm.place"  style="width:400px;"></el-input>
 				</el-form-item>
 				<el-form-item label="编号">
-					<el-input v-model="editForm.room" :disabled='true' style="width:400px;"></el-input>
+					<el-input v-model="editForm.room"  style="width:400px;"></el-input>
 				</el-form-item>
 				<el-form-item label="IP地址">
 					<el-input v-model="editForm.ip" style="width:400px;"></el-input>
@@ -155,12 +150,10 @@
 <script>
 	import axios from 'axios'
 	import util from '../../common/util'
-	//import NProgress from 'nprogress'
 	export default {
 		data() {
 			return {
 				//文件上传
-				//fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
 				fileList: [],
 				limit:1,
 				uploadform:{
@@ -280,13 +273,10 @@
 				this.$refs.upload.submit();
 			},
 			handleRemove(file, fileList) {
-				console.log(file, fileList);
 			},
 			handlePreview(file) {
-				console.log(file);
 			},
 			handleSuccess(res, file, fileList){
-				console.log(res);
 				if(res.status==0){
 					this.$message({
 						message: res.message,
@@ -341,7 +331,7 @@
 				if(x==1){
 					this.page = 1;
 				}
-				axios.get('http://120.79.12.163/getplace',{//http://120.79.12.163/getplace
+				axios.get('http://120.79.12.163/getplace',{
 					params: {
 						page: _this.page,//查询参数
 						pagesize:_this.pagesize,
@@ -349,7 +339,6 @@
 					}
 				})
 				.then(function (response) {
-					console.log(response);
 					_this.total = response.data.count;
 					_this.place = response.data.place;
 					_this.listLoading = false;
@@ -358,65 +347,19 @@
 					console.log(error);
 				});
 			},
-			/*
-			//密码重置
-			handleresetpsd: function(index, row){
-				var _this = this;
-				//和删除一样的ID 接口位置sturesetpsd
-				this.$confirm('确认要重置密码吗?', '提示', {
-					type: 'warning'
-				}).then(() => {
-					this.listLoading = true;
-					axios.get('http://120.79.12.163/ordresetpsd',{
-						params: {
-							workid: '['+'\"'+row.workid+'\"'+']',
-						}
-					})
-					.then(function (response) {
-						console.log(response);
-						var d = response.data;
-						
-						//NProgress.done();
-						if(d.status==1)
-						_this.$message({
-							message: d.message,
-							type: 'success'
-						});
-						if(d.status==0)
-						_this.$message({
-							message: d.message,
-							type: 'error'
-						});
-						_this.getplaces(0);
-						_this.listLoading = false;
-					})
-					.catch(function (error) {
-						console.log(error);
-						_this.listLoading = false;
-					});
-				}).catch(() => {
-
-				});
-
-			},
-			*/
 			//删除
 			handleDel: function (index, row) {
 				var _this = this;
 				this.$confirm('确认删除该记录吗?', '提示', {
 					type: 'warning'
 				}).then(() => {
-					//this.listLoading = true;
 					axios.get('http://120.79.12.163/placedelete',{
 						params: {
 							id: '['+'\"'+row.id+'\"'+']',
 						}
 					})
 					.then(function (response) {
-						console.log(response);
 						var d = response.data;
-						
-						//NProgress.done();
 						if(d.status==1)
 						_this.$message({
 							message: d.message,
@@ -443,7 +386,6 @@
 			handleEdit: function (index, row) {
 				this.editFormVisible = true;
 				this.editForm = Object.assign({}, row);
-				console.log(this.editForm);
 			},
 			//显示新增界面
 			handleAdd: function () {
@@ -460,12 +402,6 @@
 					kind:''
 				};
 			},
-			/*
-			//密码重置
-			resetpsdSubmit: function (){
-				var _this = this;
-			},
-			*/
 			//编辑
 			editSubmit: function () {
 				var _this = this;
@@ -473,20 +409,11 @@
 					if (valid) {
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
 							this.editLoading = true;
-							//NProgress.start();
 							let para = Object.assign({}, this.editForm);
-							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-							//for(var i=0; i<para.signno.length; i++){
-							//	para.signno[i] ='\"'+para.signno[i]+'\"';
-							//}
-							//para.signno = '['+para.signno.toString()+']';
 							para.way = 2;
-							//para.signno 
 							axios.get('http://120.79.12.163/placemodify',{params:para})
 							.then(function (response) {
-								console.log(response);
 								_this.editLoading = false;
-								//NProgress.done();
 								var d=response.data
 								if(d.status==1)
 								_this.$message({
@@ -537,20 +464,12 @@
 					if (valid) {
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
 							this.addLoading = true;
-							//NProgress.start();
 							let para = Object.assign({}, this.addForm);
-							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-							//for(var i=0; i<para.signno.length; i++){
-							//	para.signno[i] ='\"'+para.signno[i]+'\"';
-							//}
-							//para.signno = '['+para.signno.toString()+']';
 							para.way = 1;
 							axios.get('http://120.79.12.163/placemodify',{params:para})
 							.then(function (response) {
-								console.log(response);
 								var d = response.data;
 								_this.addLoading = false;
-								//NProgress.done();
 								if(d.status==1)
 								_this.$message({
 									message: d.message,
@@ -606,16 +525,12 @@
 				this.$confirm('确认删除选中记录吗？', '提示', {
 					type: 'warning'
 				}).then(() => {
-					//this.listLoading = true;
-					//NProgress.start();
 					let para = { id: ids };
-					console.log(para);
 					axios.get('http://120.79.12.163/placedelete',{params:para})
 					.then(function (response) {
 						console.log(response);
 						var d = response.data;
 						_this.listLoading = false;
-						//NProgress.done();
 						if(d.status==1)
 						_this.$message({
 							message: d.message,
@@ -688,9 +603,6 @@
 		color: #fff;
 		background-color: #658aacab;
 		border-color: #658aacab;
-	}
-	/*导入部分*/
-	.el-upload__tip{
 	}
 	
 	

@@ -171,7 +171,7 @@ export default {
             //type: 'warning'
         })
         .then(() => {
-            axios.get('http://120.79.12.163/exitlogin',{//http://120.79.12.163/getsignarea
+            axios.get('http://120.79.12.163/exitlogin',{
                 params: {
                 }
             })
@@ -202,10 +202,7 @@ export default {
                     params.append('newpassword',_this.psdFormRules.newPass)
                     axios.post('http://120.79.12.163/setpassword',params)
                     .then(function (response) {
-                        console.log(response);
                         var d = response.data;
-                        
-                        //NProgress.done();
                         if(d.status==1){
                             _this.$message({
                                 message: d.message,
@@ -237,9 +234,7 @@ export default {
     },
     psdchangeReset(){
           this.$refs.psdFormRules.resetFields();
-        
     }
-
   }
 };
 </script>
@@ -382,12 +377,9 @@ export default {
     
     /*视图切换区容器*/
     .content-wrapper {
-        /*background-color: #fff;*/
         box-sizing: border-box;
         top: 20px;
         position: relative;
-    }
-    .move-view{
     }
     .logo-big{
         left: 57%;

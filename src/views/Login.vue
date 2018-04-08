@@ -38,11 +38,9 @@ export default {
       ruleslogin: {
         account: [
           { required: true, message: '账号为空，请输入账号', trigger: 'blur' },
-          //{ validator: validaePass }
         ],
         checkPass: [
           { required: true, message: '密码为空，请输入密码', trigger: 'blur' },
-          //{ validator: validaePass2 }
         ]
       },
       checked: true
@@ -61,7 +59,6 @@ export default {
           function move(topath){
             var oCon = document.getElementById('container');
             oCon.style.transform = 'translateY(-600px) ';
-            //oCon.style.transform = 'rotateY(180deg) translateY(-600px) ';
             function late(){
                 _this.$router.push({ path: topath });
             }
@@ -78,7 +75,6 @@ export default {
           params.append('password',this.ruleForm.checkPass)
           axios.post('http://120.79.12.163/login',params)
           .then(function (response) {
-            console.log(response.data);
             var d=response.data;
             if(d.status==1&&d.power==1){
               _this.$message({
@@ -125,7 +121,6 @@ export default {
           });
 
         } else {
-          console.log('error submit!!');
           return false;
         }
       });
@@ -394,7 +389,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style  scoped>
   canvas {
     display:block;

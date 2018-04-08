@@ -1,16 +1,5 @@
 <template>
   <div class="newsign">
-    
-    <!--
-    <div>
-        <el-radio v-model="radio7" label="1" border>选用已有签到域</el-radio>
-        <el-radio v-model="radio7" label="2" border>新建签到域</el-radio>
-    </div>
-    <el-select v-model="value" filterable="true" placeholder="请选择" >
-        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
-    </el-select>
-    -->
-    
     <el-steps :active="step_index" finish-status="success" simple style="margin-top: 20px;border:3px solid #658aac; border-radius:50px;">
       <el-step title="步骤 1" ></el-step>
       <el-step title="步骤 2" ></el-step>
@@ -337,7 +326,6 @@ export default {
         _this.code = response.data.code;
         _this.signid = response.data.signid;
         _this.qrcode = response.data.qrcode;
-        console.log(_this.signid);
         if(response.data.status==1){
           if(response.data.code!=''||response.data.qrcode!=''){
             _this.codeVisible = true;
@@ -400,7 +388,7 @@ export default {
       on:{
         slideChangeTransitionEnd:function(){
           var swiperindex = this.activeIndex;
-          _this.step_index = swiperindex;
+          _this.step_index = swiperindex-1;
         },
       },
     });
@@ -413,7 +401,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
     .newsign{

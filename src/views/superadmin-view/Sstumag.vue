@@ -289,13 +289,10 @@
 				this.$refs.upload.submit();
 			},
 			handleRemove(file, fileList) {
-				console.log(file, fileList);
 			},
 			handlePreview(file) {
-				console.log(file);
 			},
 			handleSuccess(res, file, fileList){
-				console.log(res);
 				if(res.status==0){
 					this.$message({
 						message: res.message,
@@ -358,7 +355,6 @@
 					}
 				})
 				.then(function (response) {
-					console.log(response);
 					_this.total = response.data.count;
 					_this.users = response.data.users;
 					_this.listLoading = false;
@@ -382,7 +378,6 @@
 						}
 					})
 					.then(function (response) {
-						console.log(response);
 						var d = response.data;
 						
 						//NProgress.done();
@@ -421,7 +416,6 @@
 						}
 					})
 					.then(function (response) {
-						console.log(response);
 						var d = response.data;
 						
 						//NProgress.done();
@@ -455,7 +449,6 @@
 			handleEdit: function (index, row) {
 				this.editFormVisible = true;
 				this.editForm = Object.assign({}, row);
-				console.log(this.editForm);
 			},
 			//显示新增界面
 			handleAdd: function () {
@@ -484,22 +477,16 @@
 					if (valid) {
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
 							this.editLoading = true;
-							//NProgress.start();
 							let para = Object.assign({}, this.editForm);
-							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-							
 							for(var i=0; i<para.signno.length; i++){
 								para.signno[i] ='\"'+para.signno[i]+'\"';
 							}
 							para.signno = '['+para.signno.toString()+']';
-							
 							para.way = 2;
-							//para.signno 
 							axios.get('http://120.79.12.163/stumodify',{params:para})
 							.then(function (response) {
 								console.log(response);
 								_this.editLoading = false;
-								//NProgress.done();
 								var d=response.data
 								if(d.status==1)
 								_this.$message({
@@ -550,9 +537,7 @@
 					if (valid) {
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
 							this.addLoading = true;
-							//NProgress.start();
 							let para = Object.assign({}, this.addForm);
-							//para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
 							for(var i=0; i<para.signno.length; i++){
 								para.signno[i] ='\"'+para.signno[i]+'\"';
 							}
@@ -560,10 +545,8 @@
 							para.way = 1;
 							axios.get('http://120.79.12.163/stumodify',{params:para})
 							.then(function (response) {
-								console.log(response);
 								var d = response.data;
 								_this.addLoading = false;
-								//NProgress.done();
 								if(d.status==1)
 								_this.$message({
 									message: d.message,
@@ -619,16 +602,11 @@
 				this.$confirm('确认删除选中记录吗？', '提示', {
 					type: 'warning'
 				}).then(() => {
-					//this.listLoading = true;
-					//NProgress.start();
 					let para = { stuid: stuids };
-					console.log(para);
 					axios.get('http://120.79.12.163/studelete',{params:para})
 					.then(function (response) {
-						console.log(response);
 						var d = response.data;
 						_this.listLoading = false;
-						//NProgress.done();
 						if(d.status==1)
 						_this.$message({
 							message: d.message,

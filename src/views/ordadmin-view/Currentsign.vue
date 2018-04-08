@@ -20,25 +20,17 @@
                 <div id="chartPie" style="width:60%; height:350px;"></div>
             </el-form-item>
             <el-form-item :label="labelsuccess">
-                <el-tag  type="success" :key="tag.stuid" v-for="tag in signcurrent.signsuccess"  :disable-transitions="false" >
+                <el-tag  type="success" @close="handlesuccessClose(index)" :key="tag.stuid" v-for="(tag,index) in signcurrent.signsuccess" closable  :disable-transitions="false" >
                     学号:&nbsp;{{tag.stuid}}&nbsp;&nbsp;姓名:&nbsp;{{tag.name}}</el-tag>
             </el-form-item>
             <el-form-item :label="labelfail">
-                <el-tag type="danger" :key="tag.stuid" v-for="tag in signcurrent.signfail"  :disable-transitions="false"  >
+                <el-tag type="danger" @close="handlefailClose(index)" :key="tag.stuid" v-for="(tag,index) in signcurrent.signfail" closable :disable-transitions="false"  >
                     学号:&nbsp;{{tag.stuid}}&nbsp;&nbsp;姓名:&nbsp;{{tag.name}}</el-tag>
             </el-form-item>
             <el-form-item label="详情导出">
                 <el-button class="importexcel"  size="small" type="success" @click.native="importexcel">导出本次签到的Excel表</el-button>
             </el-form-item>
         </el-form>
-        <!-- <el-row>
-            <el-col :span="24">
-            </el-col>
-            <el-col :span="12">
-            </el-col>
-            <el-col :span="12">
-            </el-col>
-        </el-row> -->
     </section>
 </template>
 <script>
@@ -66,6 +58,27 @@
             }
         },
         methods:{
+            handlesuccessClose(index){
+				var _this = this;
+				axios.get('http://120.79.12.163/mchangesignstatus?signid='+_this.detailsaveid+'&stuid='+_this.signcurrent.signsuccess[index].stuid)
+				.then(function (response) {
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+				_this.handlegetinfo('mgetcurrentsign');
+			},
+			handlefailClose(index){
+				//mchangesignstatus
+				var _this = this;
+				axios.get('http://120.79.12.163/mchangesignstatus?signid='+_this.detailsaveid+'&stuid='+_this.signcurrent.signfail[index].stuid)
+				.then(function (response) {
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+				_this.handlegetinfo('mgetcurrentsign');
+			},
             //导出excel表
 			importexcel(){
 				window.open("http://120.79.12.163/signrecordexport?signid="+this.detailsaveid);

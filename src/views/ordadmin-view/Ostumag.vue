@@ -53,7 +53,7 @@
 			<el-table-column prop="signcount" label="已发布的次数" min-width="150" align="center" sortable>
 			</el-table-column>
 			<el-table-column fixed="right" label="操作" width="180" align="center">
-				<template slot-scope="scope"><!--<template scope="scope">-->
+				<template slot-scope="scope">
 					<el-button type="danger" size="small" @click="handledetail(scope.$index, scope.row,1)">详情</el-button>
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
 				</template>
@@ -93,11 +93,6 @@
 				<el-form-item label="管理教师" >
 					<el-input v-model="detailsignarea.name" :disabled='true'  style="width:400px;"></el-input>
 				</el-form-item>
-				<!--
-				<el-form-item label="签到域内学生">
-					<el-input v-model="detailsignarea.studentsname" :disabled='true' style="width:400px;"></el-input>
-				</el-form-item>
-				-->
 				<el-form-item label="学生查询">
 					<el-input v-model="detailfilters.search"  placeholder="输入关键字查询" style="width:250px;"></el-input>
 				</el-form-item>
@@ -205,14 +200,6 @@
 					signno:'',
 					workid:''
 				},
-				//接受及显示
-				/*
-				detailsignarea: {
-					signno:'',
-					name: '',
-					studentsname:[]
-				},
-				*/
 				detailsignarea:{
 					signno:'',
 					workid:'',
@@ -293,14 +280,12 @@
 				params.append('search',_this.detailfilters.search);
 				params.append('signno',_this.detailclicksend.signno);
 				params.append('workid',_this.detailclicksend.workid);
-				//axios.get('/api/getsignarea',{params:para}) //http://120.79.12.163/getareadetail
-				axios.post('http://120.79.12.163/getareadetail',//http://120.79.12.163/getareadetail
+				axios.post('http://120.79.12.163/getareadetail',
 					params
 				)
 				.then(function (response) {
 					console.log(response);
 					_this.detailtotal = response.data.detailsignarea.count;
-					//_this.detailsignarea = response.data.detailsignarea;
 					_this.detailsignarea = Object.assign({}, response.data.detailsignarea);
 					_this.listLoading = false;
 					console.log(_this.detailsignarea);
@@ -366,7 +351,6 @@
 					}
 					tmpareaname = tmpareaname.slice(1); 
 					para.studentsname = '['+tmpareaname+']';
-					//para.signno = '['+para.signno.toString()+']';
 					console.log(para.studentsname);
 					var params = new URLSearchParams()
 					params.append('signno',para.signno)
@@ -439,7 +423,6 @@
 				}
 			},
 			handleError(err, file, fileList){
-				
 			},
 			handlePro(event, file, fileList){
 			},
@@ -475,7 +458,7 @@
 				if(x==1){
 					this.page = 1;
 				}
-				axios.get('http://120.79.12.163/getsignarea',{//http://120.79.12.163/getsignarea
+				axios.get('http://120.79.12.163/getsignarea',{
 					params: {
 						page: _this.page,//查询参数
 						pagesize:_this.pagesize,
