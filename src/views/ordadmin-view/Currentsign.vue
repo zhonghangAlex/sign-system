@@ -31,6 +31,23 @@
                 <el-button class="importexcel"  size="small" type="success" @click.native="importexcel">导出本次签到的Excel表</el-button>
             </el-form-item>
         </el-form>
+        <el-dialog title="状态修改备注信息" :visible.sync ="attachVisible" :close-on-click-modal="false" >
+            <el-form :model="changestuinfo" label-width="150px">
+                <el-form-item label="学生学号"  style="width:400px;">
+					<el-input v-model="changestuinfo.stuid" disabled></el-input>
+				</el-form-item>
+                <el-form-item label="学生姓名"  style="width:400px;">
+					<el-input v-model="changestuinfo.stuname" disabled></el-input>
+				</el-form-item>
+                <el-form-item label="备注信息"  style="width:400px;">
+					<el-input></el-input>
+				</el-form-item>
+            </el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click.native="attachVisible = false">取消</el-button>
+				<el-button type="primary" @click.native="handleattachsubmit">完成</el-button>
+			</div>
+		</el-dialog>
     </section>
 </template>
 <script>
@@ -55,6 +72,12 @@
                 detailsaveid:'',
                 //饼状图
                 chartPie: null,
+
+                //修改状态及备注相关
+                attachVisible:false,
+                studentindex:'',
+                changestuinfo:{}
+
             }
         },
         methods:{
@@ -70,15 +93,23 @@
 			},
 			handlefailClose(index){
 				//mchangesignstatus
-				var _this = this;
-				axios.get('http://120.79.12.163/mchangesignstatus?signid='+_this.detailsaveid+'&stuid='+_this.signcurrent.signfail[index].stuid)
+                var _this = this;
+                _this.studentindex = index;
+                _this.attachVisible = true;
+                _this.changestuinfo = { stuid:_this.signcurrent.signfail[index].stuid,stuname:_this.signcurrent.signfail[index].name}
+				
+			},
+            handleattachsubmit(){
+                var _this = this;
+				axios.get('http://120.79.12.163/mchangesignstatus?signid='+_this.detailsaveid+'&stuid='+_this.signcurrent.signfail[_this.studentindex].stuid)
 				.then(function (response) {
 				})
 				.catch(function (error) {
 					console.log(error);
 				});
 				_this.handlegetinfo('mgetcurrentsign');
-			},
+                _this.attachVisible = false;
+            },
             //导出excel表
 			importexcel(){
 				window.open("http://120.79.12.163/signrecordexport?signid="+this.detailsaveid);

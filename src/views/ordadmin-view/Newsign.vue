@@ -40,7 +40,7 @@
                   <el-option v-for="item in options_place" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
                 
-                <el-select v-model="value_room" v-show="kindtwo" :filterable="true" placeholder="请选择地点编号"  class="step2-select2" >
+                <el-select v-model="value_room" v-show="kindtwo" :filterable="true" placeholder="请选择地点编号" @change="getxy" class="step2-select2" >
                   <el-option v-for="item in options_room" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </center>
@@ -239,6 +239,18 @@ export default {
       axios.get('http://120.79.12.163/mgetroom?place='+_this.value_place)
       .then(function (response) {
         _this.options_room = response.data.room;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    },
+    getxy(){
+      var _this = this;
+      axios.get('http://120.79.12.163/mgetxy?place='+_this.value_place+'&room='+_this.value_room)
+      .then(function (response) {
+        _this.x = response.data.x;
+        _this.y = response.data.y;
+        _this.dis = response.data.dis;
       })
       .catch(function (error) {
         console.log(error);

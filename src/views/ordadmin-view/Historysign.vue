@@ -33,7 +33,7 @@
 			</el-table-column>
 			<el-table-column prop="endtime" label="签到结束时间" min-width="200" align="center" sortable>
 			</el-table-column>
-			<el-table-column prop="gap" label="循环周期" min-width="100" align="center" sortable>
+			<el-table-column prop="gap" label="循环周期（天）" min-width="150" align="center" sortable>
 			</el-table-column>
 			<el-table-column prop="isip_bssid" label="是否开启BSSID验证" min-width="200" align="center" sortable>
 			</el-table-column>
@@ -79,7 +79,7 @@
 				<el-form-item label="结束时间">
 					<el-input v-model="editForm.endtime" style="width:400px;"></el-input>
 				</el-form-item>
-				<el-form-item label="循环周期">
+				<el-form-item label="循环周期（天）">
 					<el-input v-model="editForm.gap" style="width:400px;"></el-input>
 				</el-form-item>
 				<el-form-item label="是否开启BSSID验证">
@@ -391,6 +391,12 @@
 				.then(function (response) {
 					_this.total = response.data.count;
 					_this.sign = response.data.sign;
+					for(let i=0; i<response.data.sign.length; i++){
+						if(response.data.sign[i].place==''||response.data.sign[i].place==''){
+							_this.sign[i].place='未设置';
+							_this.sign[i].room='未设置';
+						}
+					}
 					_this.listLoading = false;
 				})
 				.catch(function (error) {
