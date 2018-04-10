@@ -9,7 +9,7 @@
         <el-button  type="primary" @click.native="exceldownload()" style="right:30px;position:absolute;margin-top:-40px;" >数据导出</el-button>
         <el-row>
             <el-col :span="24">
-                <div id="chartPie" style="width:100%; height:500px;"></div>
+                <div id="chartPie" style="width:100%; height:550px;"></div>
             </el-col>
             <el-col :span="24">
                 <center><div id="chartTable" v-bind:style="{width:ewhith,height:etableheight}"></div></center>
@@ -166,9 +166,33 @@
                             return  _this.table_time[params.value[0]]+_this.changestatus(params.value[2])+'<br>'+_this.table_stuid[params.value[1]]+'&nbsp;'+_this.student[params.value[1]]+'<br>'+'开始时间：'+_this.de_starttime[params.value[0]]+'<br>'+'截止时间：'+_this.de_endtime[params.value[0]] ;
                         }
                     },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    dataZoom: [
+                        {
+                            type: 'slider',
+                            show: true,
+                            startValue: 0,
+                            endValue: 14,
+                            handleSize: 8,
+                            minValueSpan:14,
+                            maxValueSpan:14
+                        },
+                        {
+                            type: 'inside',
+                            endValue: 14,
+                            handleSize: 8,
+                            minValueSpan:14,
+                            maxValueSpan:14
+                        }
+                    ],
                     grid: {
                         left: 2,
-                        bottom: 0,
+                        bottom: 40,
                         right: 20,
                         containLabel: true
                     },
@@ -246,6 +270,25 @@
                             saveAsImage: {}
                         }
                     },
+                    dataZoom: [
+                        {
+                            type: 'slider',
+                            show: true,
+                            startValue: 0,
+                            endValue: 8,
+                            handleSize: 8,
+                            minValueSpan:8,
+                            maxValueSpan:8
+                        },
+                        {
+                            type: 'inside',
+                            startValue: 0,
+                            endValue: 8,
+                            handleSize: 8,
+                            minValueSpan:8,
+                            maxValueSpan:8
+                        }
+                    ],
                     dataset: {
                         source: [
                             _this.linetime,
@@ -292,7 +335,7 @@
                         },
                     },
                     yAxis: {gridIndex: 0,scale:true},
-                    grid: {top: '55%'},
+                    grid: {top: '55%',bottom:80},
                     series: [
                         {type: 'line',color:'#2ca778', smooth: true, seriesLayoutBy: 'row'},
                         {type: 'line',color:'#c23531', smooth: true, seriesLayoutBy: 'row'},
@@ -331,15 +374,7 @@
                         });
                     }
                 });
-                //this.chartPie.setOption(option);
-
-            
-            },/*
-            drawCharts() {
-                this.drawLineChart();
-                this.drawPieChart();
-                this.drawTableChart();
-            },*/
+            },
         },
         created:function(){
             var _this = this;

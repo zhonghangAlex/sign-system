@@ -4,6 +4,9 @@
             <el-form-item label="签到域编号" >
                 <el-input v-model="signcurrent.groupname" :disabled='true'  style="width:400px;"></el-input>
             </el-form-item>
+            <el-form-item label="地点" >
+                <el-input v-model="signcurrent.place" :disabled='true'  style="width:400px;"></el-input>
+            </el-form-item>
             <el-form-item label="开始时间" >
                 <el-input v-model="signcurrent.starttime" :disabled='true'  style="width:400px;"></el-input>
             </el-form-item>
@@ -29,6 +32,7 @@
             </el-form-item>
             <el-form-item label="详情导出">
                 <el-button class="importexcel"  size="small" type="success" @click.native="importexcel">导出本次签到的Excel表</el-button>
+                <el-button class="importexcel"  size="small" type="success" @click.native="downloadqrcode">下载本次签到的二维码</el-button>
             </el-form-item>
         </el-form>
         <el-dialog title="状态修改备注信息" :visible.sync ="attachVisible" :close-on-click-modal="false" >
@@ -39,8 +43,8 @@
                 <el-form-item label="学生姓名"  style="width:400px;">
 					<el-input v-model="changestuinfo.stuname" disabled></el-input>
 				</el-form-item>
-                <el-form-item label="备注信息"  style="width:400px;">
-					<el-input></el-input>
+                <el-form-item label="备注信息"   style="width:400px;">
+					<el-input v-model="inputinfo"></el-input>
 				</el-form-item>
             </el-form>
 			<div slot="footer" class="dialog-footer">
@@ -70,17 +74,22 @@
                 labelfail:'',
                 //存储点开详情时当行的id唯一标识
                 detailsaveid:'',
+                qrcode:'',
                 //饼状图
                 chartPie: null,
 
                 //修改状态及备注相关
                 attachVisible:false,
                 studentindex:'',
-                changestuinfo:{}
+                changestuinfo:{},
+                inputinfo:''
 
             }
         },
         methods:{
+            downloadqrcode(){
+                window.open("http://120.79.12.163/createqrcode?qr=checkqrcode%3Fsignid%3D"+this.detailsaveid+"%26qrcode%3D"+this.qrcode);
+            },
             handlesuccessClose(index){
 				var _this = this;
 				axios.get('http://120.79.12.163/mchangesignstatus?signid='+_this.detailsaveid+'&stuid='+_this.signcurrent.signsuccess[index].stuid)
@@ -101,8 +110,19 @@
 			},
             handleattachsubmit(){
                 var _this = this;
-				axios.get('http://120.79.12.163/mchangesignstatus?signid='+_this.detailsaveid+'&stuid='+_this.signcurrent.signfail[_this.studentindex].stuid)
+				axios.get('http://120.79.12.163/mchangesignstatus?signid='+_this.detailsaveid+'&stuid='+_this.signcurrent.signfail[_this.studentindex].stuid+'&info='+_this.inputinfo)
 				.then(function (response) {
+                    if(response.data.status == 1){
+						_this.$message({
+							message:response.data.message,
+							type:'success'
+						});
+					}else{
+						_this.$message({
+							message:response.data.message,
+							type:'error'
+						})
+					}
 				})
 				.catch(function (error) {
 					console.log(error);
@@ -180,6 +200,7 @@
                     _this.signcurrent = response.data;
                     _this.signsuccesscount = response.data.successcount;
                     _this.signfailcount = parseInt(response.data.totalcount)-parseInt(response.data.successcount);
+                    _this.qrcode = response.data.qrcode;  
                     if(response.data.totalcount&&response.data.successcount){
                         _this.labelsuccess = '签到成功的学生（'+_this.signsuccesscount+'人 )';
                         _this.labelfail = '未签到的学生（'+_this.signfailcount+'人 )';

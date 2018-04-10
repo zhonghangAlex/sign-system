@@ -19,6 +19,8 @@
 			</el-table-column>
 			<el-table-column prop="id" label="唯一标识" v-if="showid" min-width="120" align="center" sortable>
 			</el-table-column>
+			<el-table-column  fixed="left" type="index" :index="tableindex" label="ID" width="60" align="center">
+			</el-table-column>
 			<el-table-column prop="groupname" label="签到域名" min-width="120" align="center" sortable>
 			</el-table-column>
 			<el-table-column prop="place" label="签到地点" min-width="100" align="center" sortable>
@@ -138,12 +140,31 @@
 					<el-tag type="danger" @close="handlefailClose(index)" :key="tag.stuid" v-for="(tag,index) in signdetail.signfail" closable :disable-transitions="false"  >
 						学号:&nbsp;{{tag.stuid}}&nbsp;&nbsp;姓名:&nbsp;{{tag.name}}</el-tag>
 				</el-form-item>
-				<el-form-item label="详情导出">
+				<el-form-item label="信息下载">
 					<el-button class="importexcel"  size="small" type="success" @click.native="importexcel">导出本次签到的Excel表</el-button>
+					<el-button class="importqrcode"  size="small" type="success" @click.native="downloadqrcode">下载本次签到的二维码</el-button>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click.native="signdetailFormVisible = false">关闭界面</el-button>
+			</div>
+		</el-dialog>
+		<!-- 修改备注信息界面 -->
+		<el-dialog title="状态修改备注信息" :visible.sync ="attachVisible" :close-on-click-modal="false" >
+            <el-form :model="changestuinfo" label-width="150px">
+                <el-form-item label="学生学号"  style="width:400px;">
+					<el-input v-model="changestuinfo.stuid" disabled></el-input>
+				</el-form-item>
+                <el-form-item label="学生姓名"  style="width:400px;">
+					<el-input v-model="changestuinfo.stuname" disabled></el-input>
+				</el-form-item>
+                <el-form-item label="备注信息"   style="width:400px;">
+					<el-input v-model="inputinfo"></el-input>
+				</el-form-item>
+            </el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click.native="attachVisible = false">取消</el-button>
+				<el-button type="primary" @click.native="handleattachsubmit">完成</el-button>
 			</div>
 		</el-dialog>
 
@@ -220,9 +241,16 @@
 				labelfail:'',
 				//存储点开详情时当行的id唯一标识
 				detailsaveid:'',
+				//存储点开详情时此次签到的二维码
+				qrcode:'',
 				//饼状图
 				chartPie: null,
 
+				//修改状态及备注相关
+                attachVisible:false,
+                studentindex:'',
+                changestuinfo:{},
+                inputinfo:''
 
 			}
 		},
@@ -241,16 +269,34 @@
 				this.handledetailopen();
 			},
 			handlefailClose(index){
-				//mchangesignstatus
 				var _this = this;
-				axios.get('http://120.79.12.163/mchangesignstatus?signid='+_this.detailsaveid+'&stuid='+_this.signdetail.signfail[index].stuid)
+                _this.studentindex = index;
+                _this.attachVisible = true;
+                _this.changestuinfo = { stuid:_this.signdetail.signfail[index].stuid,stuname:_this.signdetail.signfail[index].name}
+				                                                                                       
+			},
+			handleattachsubmit(){
+                var _this = this;
+				axios.get('http://120.79.12.163/mchangesignstatus?signid='+_this.detailsaveid+'&stuid='+_this.signdetail.signfail[_this.studentindex].stuid+'&info='+_this.inputinfo)
 				.then(function (response) {
+					if(response.data.status == 1){
+						_this.$message({
+							message:response.data.message,
+							type:'success'
+						});
+					}else{
+						_this.$message({
+							message:response.data.message,
+							type:'error'
+						})
+					}
 				})
 				.catch(function (error) {
 					console.log(error);
 				});
-				this.handledetailopen();
-			},
+				_this.handledetailopen();
+                _this.attachVisible = false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+            },
 			handledetailopen: function(index, row,x){
 				var _this = this;
 				_this.signdetailFormVisible = true;
@@ -262,12 +308,13 @@
 					_this.signdetail = response.data;
 					_this.signsuccesscount = response.data.successcount;
 					_this.signfailcount = parseInt(response.data.totalcount)-parseInt(response.data.successcount);
+					_this.qrcode = response.data.qrcode;
 					_this.drawCharts();
 					if(response.data.totalcount&&response.data.successcount){
 						_this.labelsuccess = '签到成功的学生（'+_this.signsuccesscount+'人 )';
 						_this.labelfail = '未签到的学生（'+_this.signfailcount+'人 )';
 					}else{
-						if(response.data.signsuccess!=''&&response.data.signfali!='')
+						if(response.data.signsuccess!=''&&response.data.signfail!='')
 						{
 							_this.labelsuccess = '查询结果：已签到学生';
 							_this.labelfail = '查询结果：未签到的学生';
@@ -296,6 +343,10 @@
 			//导出excel表
 			importexcel(){
 				window.open("http://120.79.12.163/signrecordexport?signid="+this.detailsaveid);
+			},
+			//下载二维码
+			downloadqrcode(){
+				window.open("http://120.79.12.163/createqrcode?qr=checkqrcode%3Fsignid%3D"+this.detailsaveid+"%26qrcode%3D"+this.qrcode);
 			},
 			//详情的统计图
 			drawPieChart() {
@@ -603,7 +654,11 @@
 		border-color: #658aacab;
 	}
 	.importexcel{
-		position: absolute;
+		position: relative;
+	}
+	.importqrcode{
+		position: relative;
+
 	}
 	
 	

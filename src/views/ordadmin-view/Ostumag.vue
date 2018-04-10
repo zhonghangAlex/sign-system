@@ -431,8 +431,6 @@
 			formatSex: function (row, column) {
 				return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
 			},
-			
-
 			//分页器
 			handleSizeChange(val) {
 				console.log(`每页 ${val} 条`);
@@ -660,10 +658,5 @@
 		background-color: #658aacab;
 		border-color: #658aacab;
 	}
-	/*导入部分*/
-	.el-upload__tip{
-	}
-	
-	
 </style>
 
