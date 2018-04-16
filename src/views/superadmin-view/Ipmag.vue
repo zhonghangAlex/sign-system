@@ -149,7 +149,6 @@
 
 <script>
 	import axios from 'axios'
-	import util from '../../common/util'
 	export default {
 		data() {
 			return {
@@ -266,7 +265,7 @@
 			},
 			//excel下载
 			exceldownload(){
-				var _this = this;
+				let _this = this;
 				window.open("http://120.79.12.163/placemodel");
 			},
 			submitUpload() {
@@ -326,7 +325,7 @@
 			},
 			//获取用户列表
 			getplaces(x) {
-				var _this = this;
+				let _this = this;
 				this.listLoading = true;
 				if(x==1){
 					this.page = 1;
@@ -349,7 +348,7 @@
 			},
 			//删除
 			handleDel: function (index, row) {
-				var _this = this;
+				let _this = this;
 				this.$confirm('确认删除该记录吗?', '提示', {
 					type: 'warning'
 				}).then(() => {
@@ -359,7 +358,7 @@
 						}
 					})
 					.then(function (response) {
-						var d = response.data;
+						let d = response.data;
 						if(d.status==1)
 						_this.$message({
 							message: d.message,
@@ -404,7 +403,7 @@
 			},
 			//编辑
 			editSubmit: function () {
-				var _this = this;
+				let _this = this;
 				this.$refs.editForm.validate((valid) => {
 					if (valid) {
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
@@ -414,7 +413,7 @@
 							axios.get('http://120.79.12.163/placemodify',{params:para})
 							.then(function (response) {
 								_this.editLoading = false;
-								var d=response.data
+								let d=response.data
 								if(d.status==1)
 								_this.$message({
 									message: d.message,
@@ -459,7 +458,7 @@
 
 			//新增
 			addSubmit: function () {
-				var _this = this;
+				let _this = this;
 				this.$refs.addForm.validate((valid) => {
 					if (valid) {
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
@@ -468,7 +467,7 @@
 							para.way = 1;
 							axios.get('http://120.79.12.163/placemodify',{params:para})
 							.then(function (response) {
-								var d = response.data;
+								let d = response.data;
 								_this.addLoading = false;
 								if(d.status==1)
 								_this.$message({
@@ -519,8 +518,8 @@
 			
 			//批量删除
 			batchRemove: function () {
-				var _this = this;
-				var ids = this.sels.map(item => '\"'+item.id+'\"').toString();
+				let _this = this;
+				let ids = this.sels.map(item => '\"'+item.id+'\"').toString();
 				ids = '['+ids+']';
 				this.$confirm('确认删除选中记录吗？', '提示', {
 					type: 'warning'
@@ -529,7 +528,7 @@
 					axios.get('http://120.79.12.163/placedelete',{params:para})
 					.then(function (response) {
 						console.log(response);
-						var d = response.data;
+						let d = response.data;
 						_this.listLoading = false;
 						if(d.status==1)
 						_this.$message({

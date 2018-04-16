@@ -175,7 +175,6 @@
 <script>
 	import echarts from 'echarts'
 	import axios from 'axios'
-	import util from '../../common/util'
 	//import NProgress from 'nprogress'
 	export default {
 		data() {
@@ -193,7 +192,6 @@
 				border:false,
 				listLoading: false,
 				sels: [],//列表选中列
-
 				//编辑页面相关
 				editFormVisible: false,//编辑界面是否显示
 				editLoading: false,
@@ -222,11 +220,9 @@
 				//编辑页面tag
 				inputVisible: false,
 				inputValue: '',
-
 				//详情相关
 				signdetailFormVisible:false,
 				signdetailFormRules:{
-
 				},
 				signdetailfilters:{
 					search:''
@@ -245,13 +241,11 @@
 				qrcode:'',
 				//饼状图
 				chartPie: null,
-
 				//修改状态及备注相关
                 attachVisible:false,
                 studentindex:'',
                 changestuinfo:{},
                 inputinfo:''
-
 			}
 		},
 		methods: {
@@ -259,7 +253,7 @@
 			//显示页面并初始化数据
 			handlesuccessClose(index){
 				//mchangesignstatus
-				var _this = this;
+				let _this = this;
 				axios.get('http://120.79.12.163/mchangesignstatus?signid='+_this.detailsaveid+'&stuid='+_this.signdetail.signsuccess[index].stuid)
 				.then(function (response) {
 				})
@@ -269,14 +263,14 @@
 				this.handledetailopen();
 			},
 			handlefailClose(index){
-				var _this = this;
+				let _this = this;
                 _this.studentindex = index;
                 _this.attachVisible = true;
                 _this.changestuinfo = { stuid:_this.signdetail.signfail[index].stuid,stuname:_this.signdetail.signfail[index].name}
 				                                                                                       
 			},
 			handleattachsubmit(){
-                var _this = this;
+                let _this = this;
 				axios.get('http://120.79.12.163/mchangesignstatus?signid='+_this.detailsaveid+'&stuid='+_this.signdetail.signfail[_this.studentindex].stuid+'&info='+_this.inputinfo)
 				.then(function (response) {
 					if(response.data.status == 1){
@@ -298,7 +292,7 @@
                 _this.attachVisible = false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
             },
 			handledetailopen: function(index, row,x){
-				var _this = this;
+				let _this = this;
 				_this.signdetailFormVisible = true;
 				if(x==1){
 					_this.detailsaveid = row.id;
@@ -338,7 +332,6 @@
 				.catch(function (error) {
 					console.log(error);
 				});
-
 			},
 			//导出excel表
 			importexcel(){
@@ -350,7 +343,7 @@
 			},
 			//详情的统计图
 			drawPieChart() {
-				var _this = this;
+				let _this = this;
                 this.chartPie = echarts.init(document.getElementById('chartPie'));
                 this.chartPie.setOption({
 					color:['#67c23a','#f56c6c'],
@@ -362,7 +355,6 @@
                         orient: 'vertical',
                         x: 'left',
                         data:['实到人数','缺勤人数'],
-
                     },
                     series: [
                         {
@@ -400,7 +392,6 @@
                 this.drawPieChart()
             },
 			
-
 			//分页器
 			handleSizeChange(val) {
 				console.log(`每页 ${val} 条`);
@@ -416,7 +407,6 @@
 			selsChange: function (sels) {
 				this.sels = sels;
 			},
-
 			//得到正确的index索引
 			tableindex(index){
 				index = (this.page-1)*this.pagesize+index+1;
@@ -427,7 +417,7 @@
 			},
 			//获取用户列表
 			getsign(x) {
-				var _this = this;
+				let _this = this;
 				this.listLoading = true;
 				if(x==1){
 					this.page = 1;
@@ -457,7 +447,7 @@
 			
 			//删除
 			handleDel: function (index, row) {
-				var _this = this;
+				let _this = this;
 				this.$confirm('确认删除该记录吗?', '提示', {
 					type: 'warning'
 				}).then(() => {
@@ -468,7 +458,7 @@
 						}
 					})
 					.then(function (response) {
-						var d = response.data;
+						let d = response.data;
 						
 						//NProgress.done();
 						if(d.status==1)
@@ -493,10 +483,8 @@
 						_this.listLoading = false;
 					});
 				}).catch(() => {
-
 				});
 			},
-
 			//显示编辑界面
 			handleEdit: function (index, row) {
 				this.editFormVisible = true;
@@ -505,7 +493,7 @@
 			
 			//编辑
 			editSubmit: function () {
-				var _this = this;
+				let _this = this;
 				this.$refs.editForm.validate((valid) => {
 					if (valid) {
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
@@ -519,7 +507,7 @@
 							.then(function (response) {
 								_this.editLoading = false;
 								//NProgress.done();
-								var d=response.data
+								let d=response.data
 								if(d.status==1)
 								_this.$message({
 									message: d.message,
@@ -545,14 +533,12 @@
 			handleClose(tag) {
 				this.editForm.signno.splice(this.editForm.signno.indexOf(tag), 1);
 			},
-
 			showInput() {
 				this.inputVisible = true;
 				this.$nextTick(_ => {
 				this.$refs.saveTagInput.$refs.input.focus();
 				});
 			},
-
 			handleInputConfirm() {
 				let inputValue = this.inputValue;
 				if (inputValue) {
@@ -564,8 +550,8 @@
 			
 			//批量删除
 			batchRemove: function () {
-				var _this = this;
-				var ids = this.sels.map(item => '\"'+item.id+'\"').toString();
+				let _this = this;
+				let ids = this.sels.map(item => '\"'+item.id+'\"').toString();
 				ids = '['+ids+']';
 				this.$confirm('确认删除选中记录吗？', '提示', {
 					type: 'warning'
@@ -573,7 +559,7 @@
 					let para = { id: ids };
 					axios.get('http://120.79.12.163/signdelete',{params:para})
 					.then(function (response) {
-						var d = response.data;
+						let d = response.data;
 						_this.listLoading = false;
 						if(d.status==1)
 						_this.$message({
@@ -595,7 +581,6 @@
 						});
 					});
 				}).catch(() => {
-
 				});
 			}
 		},
@@ -604,7 +589,6 @@
 		},
 		
 	}
-
 </script>
 
 <style scoped>
@@ -658,9 +642,7 @@
 	}
 	.importqrcode{
 		position: relative;
-
 	}
 	
 	
 </style>
-

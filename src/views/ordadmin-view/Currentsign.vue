@@ -57,7 +57,6 @@
 <script>
     import echarts from 'echarts'
 	import axios from 'axios'
-	import util from '../../common/util'
     export default {
         data() {
             return {
@@ -84,6 +83,8 @@
                 changestuinfo:{},
                 inputinfo:''
 
+                
+
             }
         },
         methods:{
@@ -91,7 +92,7 @@
                 window.open("http://120.79.12.163/createqrcode?qr=checkqrcode%3Fsignid%3D"+this.detailsaveid+"%26qrcode%3D"+this.qrcode);
             },
             handlesuccessClose(index){
-				var _this = this;
+				let _this = this;
 				axios.get('http://120.79.12.163/mchangesignstatus?signid='+_this.detailsaveid+'&stuid='+_this.signcurrent.signsuccess[index].stuid)
 				.then(function (response) {
 				})
@@ -102,14 +103,14 @@
 			},
 			handlefailClose(index){
 				//mchangesignstatus
-                var _this = this;
+                let _this = this;
                 _this.studentindex = index;
                 _this.attachVisible = true;
                 _this.changestuinfo = { stuid:_this.signcurrent.signfail[index].stuid,stuname:_this.signcurrent.signfail[index].name}
 				
 			},
             handleattachsubmit(){
-                var _this = this;
+                let _this = this;
 				axios.get('http://120.79.12.163/mchangesignstatus?signid='+_this.detailsaveid+'&stuid='+_this.signcurrent.signfail[_this.studentindex].stuid+'&info='+_this.inputinfo)
 				.then(function (response) {
                     if(response.data.status == 1){
@@ -136,7 +137,7 @@
 			},
 			//详情的统计图
 			drawPieChart() {
-				var _this = this;
+				let _this = this;
                 this.chartPie = echarts.init(document.getElementById('chartPie'));
                 this.chartPie.setOption({
 					color:['#67c23a','#f56c6c'],
@@ -193,10 +194,11 @@
                 }
             },
             handlegetinfo(getinfo){
-                var _this = this;
+                let _this = this;
                 axios.get('http://120.79.12.163/'+getinfo+'?signid='+_this.detailsaveid+'&search='+_this.signcurrentfilters.search)
                 .then(function (response) {
                     _this.detailsaveid = response.data.signid;
+                    
                     _this.signcurrent = response.data;
                     _this.signsuccesscount = response.data.successcount;
                     _this.signfailcount = parseInt(response.data.totalcount)-parseInt(response.data.successcount);

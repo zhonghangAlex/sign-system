@@ -64,22 +64,22 @@
                 this.chartTable.resize();
             },
             exceldownload(){
-                var _this = this;
+                let _this = this;
                 window.open('http://120.79.12.163/mallrecordexport?groupname='+_this.value+'&starttime='+_this.starttime+'&endtime='+_this.endtime)
             },
             pickchange(){
-                var _this = this;
+                let _this = this;
                 _this.getLinedata();
                 _this.getTabledata();
             },
             getLinedata(){
-                var _this = this;
+                let _this = this;
                 axios.get('http://120.79.12.163/msignareacount?signarea='+_this.value+'&starttime='+_this.starttime+'&endtime='+_this.endtime)
                 .then(function (response) {
                     _this.linedata = [];
                     _this.linetime = [];
                     _this.linedatafail = [];
-                    for(var i=0; i<response.data.record.length; i++){
+                    for(let i=0; i<response.data.record.length; i++){
                         _this.linetime[0] = "签到情况";
                         _this.linedata[0] = "签到成功的人数";
                         _this.linedatafail[0] ="未签到人数";
@@ -100,7 +100,7 @@
                 });
             },
             getTabledata(){
-                var _this = this;
+                let _this = this;
                 axios.get('http://120.79.12.163/mgrouprecord?signarea='+_this.value+'&starttime='+_this.starttime+'&endtime='+_this.endtime)
                 .then(function (response) {
                     _this.student = [];
@@ -109,19 +109,19 @@
                     if(response.data.student.length==0){
                         _this.student = ["暂无学生数据"];
                     }else{
-                        var plength = response.data.student[0].time.length;
-                        var stulength = response.data.student.length;
+                        let plength = response.data.student[0].time.length;
+                        let stulength = response.data.student.length;
                         window.document.getElementById('chartTable').style.height = stulength*40+80+'px';
 
-                        for(var i=0; i<response.data.student.length; i++){
+                        for(let i=0; i<response.data.student.length; i++){
                             _this.student[i] = response.data.student[i].name;
                             _this.table_stuid[i] = response.data.student[i].stuid;
-                            for(var j=0; j<response.data.student[0].time.length; j++){
+                            for(let j=0; j<response.data.student[0].time.length; j++){
                                 _this.status_position[i*plength+j] = response.data.student[i].time[j];
                                 
                             }
                         }
-                        for(var k=0; k<plength; k++){
+                        for(let k=0; k<plength; k++){
                             _this.table_time[k] = '第'+(k+1)+'次';  
                             _this.de_starttime[k] = response.data.sign[k].starttime;  
                             _this.de_endtime[k] = response.data.sign[k].endtime;  
@@ -144,10 +144,10 @@
                 }
             },
             drawTableChart(){
-                var _this = this;
-                var hours = _this.table_time;
-                var days = _this.student;
-                var data = _this.status_position;
+                let _this = this;
+                let hours = _this.table_time;
+                let days = _this.student;
+                let data = _this.status_position;
                 data = data.map(function (item) {
                     return [item[1], item[0], item[2]];
                 });
@@ -251,7 +251,7 @@
                 });
             },
             drawPieChart() {
-                var _this = this;
+                let _this = this;
                 this.chartPie = echarts.init(document.getElementById('chartPie'));
                 this.chartPie.setOption({
                     legend: {},
@@ -277,16 +277,12 @@
                             startValue: 0,
                             endValue: 8,
                             handleSize: 8,
-                            minValueSpan:8,
-                            maxValueSpan:8
                         },
                         {
                             type: 'inside',
                             startValue: 0,
                             endValue: 8,
                             handleSize: 8,
-                            minValueSpan:8,
-                            maxValueSpan:8
                         }
                     ],
                     dataset: {
@@ -300,20 +296,20 @@
                         type: 'category',
                         axisLabel : {//坐标轴刻度标签的相关设置。
                             formatter : function(params){
-                            var newParamsName = "";// 最终拼接成的字符串
-                                var paramsNameNumber = params.length;// 实际标签的个数
-                                var provideNumber = 10;// 每行能显示的字的个数
-                                var rowNumber = Math.ceil(paramsNameNumber / provideNumber);// 换行的话，需要显示几行，向上取整
+                            let newParamsName = "";// 最终拼接成的字符串
+                                let paramsNameNumber = params.length;// 实际标签的个数
+                                let provideNumber = 10;// 每行能显示的字的个数
+                                let rowNumber = Math.ceil(paramsNameNumber / provideNumber);// 换行的话，需要显示几行，向上取整
                                 /**
                                  * 判断标签的个数是否大于规定的个数， 如果大于，则进行换行处理 如果不大于，即等于或小于，就返回原标签
                                  */
                                 // 条件等同于rowNumber>1
                                 if (paramsNameNumber > provideNumber) {
                                     /** 循环每一行,p表示行 */
-                                    for (var p = 0; p < rowNumber; p++) {
-                                        var tempStr = "";// 表示每一次截取的字符串
-                                        var start = p * provideNumber;// 开始截取的位置
-                                        var end = start + provideNumber;// 结束截取的位置
+                                    for (let p = 0; p < rowNumber; p++) {
+                                        let tempStr = "";// 表示每一次截取的字符串
+                                        let start = p * provideNumber;// 开始截取的位置
+                                        let end = start + provideNumber;// 结束截取的位置
                                         // 此处特殊处理最后一行的索引值
                                         if (p == rowNumber - 1) {
                                             // 最后一次不换行
@@ -357,9 +353,9 @@
                     ]
                 });
                 this.chartPie.on('updateAxisPointer', function (event) {
-                    var xAxisInfo = event.axesInfo[0];
+                    let xAxisInfo = event.axesInfo[0];
                     if (xAxisInfo) {
-                        var dimension = xAxisInfo.value + 1;
+                        let dimension = xAxisInfo.value + 1;
                         _this.chartPie.setOption({
                             series: {
                                 id: 'pie',
@@ -377,7 +373,7 @@
             },
         },
         created:function(){
-            var _this = this;
+            let _this = this;
             axios.get('http://120.79.12.163/usesignarea')
             .then(function (response) {
                 _this.options = response.data.signarea;
@@ -390,7 +386,7 @@
             });
         },
         mounted: function () {
-            var _this = this;
+            let _this = this;
             window.onresize = function(){
                 _this.chartTable.resize();
                 _this.chartPie.resize();

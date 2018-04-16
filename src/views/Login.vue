@@ -53,11 +53,11 @@ export default {
       }
     },
     handleSubmit(ev) {
-      var _this=this;
+      let _this=this;
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           function move(topath){
-            var oCon = document.getElementById('container');
+            let oCon = document.getElementById('container');
             oCon.style.transform = 'translateY(-600px) ';
             function late(){
                 _this.$router.push({ path: topath });
@@ -65,9 +65,9 @@ export default {
             setTimeout(late,300);
           }
           //post 方法请求数据
-          var loginParams = { id: this.ruleForm.account, password: this.ruleForm.checkPass };//对象格式
-          var params = new URLSearchParams()
-          var para = {
+          let loginParams = { id: this.ruleForm.account, password: this.ruleForm.checkPass };//对象格式
+          let params = new URLSearchParams()
+          let para = {
             id: this.ruleForm.account,
             password: this.ruleForm.checkPass
           }
@@ -75,7 +75,7 @@ export default {
           params.append('password',this.ruleForm.checkPass)
           axios.post('http://120.79.12.163/login',params)
           .then(function (response) {
-            var d=response.data;
+            let d=response.data;
             if(d.status==1&&d.power==1){
               _this.$message({
                 message: d.message,
@@ -127,7 +127,7 @@ export default {
     }
   },
   mounted(){
-    var FastRandom = function()
+    let FastRandom = function()
     {
         this.getNextFloat = function()
         {
@@ -135,11 +135,11 @@ export default {
         };
     };
 
-    var ParticleWave = function()
+    let ParticleWave = function()
     {
-        var me = this;
+        let me = this;
 
-        var config = {
+        let config = {
             colors : {
                 background : 0x81c1eb,
                 particle   : 0xbcbfc2
@@ -150,32 +150,32 @@ export default {
             particleCount : 3000
         };
 
-        var TAU = Math.PI * 2;
+        let TAU = Math.PI * 2;
 
-        var random = new FastRandom();
+        let random = new FastRandom();
 
-        var particle;
-        var particleFillStyle;
-        var particleColorRGB = new Float32Array(3);
+        let particle;
+        let particleFillStyle;
+        let particleColorRGB = new Float32Array(3);
 
-        var smoothGradient;
-        var waterGradient;
+        let smoothGradient;
+        let waterGradient;
 
-        var canvas;
-        var engine;
+        let canvas;
+        let engine;
 
-        var width;
-        var height;
+        let width;
+        let height;
 
-        var particleWaveWalker = 0;
-        var randomWalker = 0;
+        let particleWaveWalker = 0;
+        let randomWalker = 0;
 
-        var requestTick = function()
+        let requestTick = function()
         {
             window.requestAnimationFrame(tick);
         };
 
-        var initParticle = function()
+        let initParticle = function()
         {
             particle = new Float32Array(config.particleCount * 2);
 
@@ -185,9 +185,9 @@ export default {
             });
         };
 
-        var initCanvas = function()
+        let initCanvas = function()
         {
-            var cs = document.getElementsByTagName('canvas');
+            let cs = document.getElementsByTagName('canvas');
 
             canvas = cs[0];
             engine = canvas.getContext('2d');
@@ -199,7 +199,7 @@ export default {
             canvas.setAttribute('height', height);
         };
 
-        var initParticleColor = function()
+        let initParticleColor = function()
         {
             particleColorRGB[0] = config.colors.particle >> 16 & 0xff;
             particleColorRGB[1] = config.colors.particle >>  8 & 0xff;
@@ -208,7 +208,7 @@ export default {
             particleFillStyle = 'rgb(' + particleColorRGB[0] + ',' + particleColorRGB[1] + ',' + particleColorRGB[2] + ')';
         };
 
-        var initSmoothGradient = function()
+        let initSmoothGradient = function()
         {
             smoothGradient = engine.createLinearGradient(
                 width / 2,
@@ -220,7 +220,7 @@ export default {
           
         };
 
-        var initWaterGradient = function()
+        let initWaterGradient = function()
         {
             waterGradient = engine.createLinearGradient(
                 width / 2,
@@ -233,7 +233,7 @@ export default {
             waterGradient.addColorStop(1, 'rgba(30, 0, 60, 0.5)');
         };
 
-        var init = function()
+        let init = function()
         {
             initCanvas();
             initParticle();
@@ -242,36 +242,36 @@ export default {
             initWaterGradient();
         };
 
-        var eachParticle = function(cb)
+        let eachParticle = function(cb)
         {
-            for (var i = 0; i < particle.length; i += 2) {
+            for (let i = 0; i < particle.length; i += 2) {
                 cb(i, i + 1);
             }
         };
 
-        var renderParticle = function()
+        let renderParticle = function()
         {
             randomWalker += (Math.random() - 0.5) * 0.1;
 
             particleWaveWalker += 0.03;
 
-            var radius = {
+            let radius = {
                 min    : 1,
                 add    : 5
             };
 
-            var midY = height / 2;
-            var midX = width / 2;
+            let midY = height / 2;
+            let midX = width / 2;
 
-            var spreadX = 5;
-            var spreadZ = 0.0;
+            let spreadX = 5;
+            let spreadZ = 0.0;
 
-            var modZ = 0.0;
+            let modZ = 0.0;
 
-            var addX = 0;
-            var addY = 0;
+            let addX = 0;
+            let addY = 0;
 
-            var p = {
+            let p = {
                 x : 0.0,
                 y : 0.0,
                 r : 0.0
@@ -280,9 +280,9 @@ export default {
             engine.fillStyle = particleFillStyle;
             // engine.beginPath();
 
-            var waveControl = 10;
+            let waveControl = 10;
 
-            for (var i = 0, xIndex, zIndex; i < particle.length; i += 2) {
+            for (let i = 0, xIndex, zIndex; i < particle.length; i += 2) {
 
                 xIndex = i;
                 zIndex = i + 1;
@@ -340,32 +340,32 @@ export default {
             // engine.fill();
         };
 
-        var colorIntToHexString = function(color)
+        let colorIntToHexString = function(color)
         {
-            var s = color.toString(16);
+            let s = color.toString(16);
 
             return '0'.repeat(6 - s.length) + s;
         };
 
-        var clear = function()
+        let clear = function()
         {
             engine.fillStyle = '#' + colorIntToHexString(config.colors.background);
             engine.fillRect(0, 0, width, height);
         };
 
-        var drawSmooth = function()
+        let drawSmooth = function()
         {
             engine.fillStyle = smoothGradient;
             engine.fillRect(0, 0, width, height);
         };
 
-        var drawWater = function()
+        let drawWater = function()
         {
             engine.fillStyle = waterGradient;
             engine.fillRect(0, height / 2, width, height / 2);
         };
 
-        var tick = function()
+        let tick = function()
         {
             clear();
 
@@ -383,7 +383,7 @@ export default {
         };
     };
 
-    var pw = new ParticleWave();
+    let pw = new ParticleWave();
     pw.run();
   }
 }

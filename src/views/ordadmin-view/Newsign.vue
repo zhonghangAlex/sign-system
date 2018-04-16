@@ -141,7 +141,6 @@
 
 <script language="javascript">
 import axios from 'axios'
-import util from '../../common/util'
 import Swiper from '../../../static/js/swiper' 
 import '../../../static/css/swiper.css'
 import GeoUtils from '../../../static/js/GeoUtils.js'
@@ -213,7 +212,7 @@ export default {
 
     //选择签到域数据获取
     getsignareapick(){
-      var _this = this;
+      let _this = this;
       axios.get('http://120.79.12.163/usesignarea')
       .then(function (response) {
         _this.options = response.data.signarea;
@@ -224,7 +223,7 @@ export default {
     },
     //点名类别选择——地点选择
     getsignareplace(){
-      var _this = this;
+      let _this = this;
       axios.get('http://120.79.12.163/mgetplace?k='+_this.value_kind)
       .then(function (response) {
         _this.options_place = response.data.place;
@@ -235,7 +234,7 @@ export default {
     },
     //点名类别选择——编号选择
     getsignarearoom(){
-      var _this = this;
+      let _this = this;
       axios.get('http://120.79.12.163/mgetroom?place='+_this.value_place)
       .then(function (response) {
         _this.options_room = response.data.room;
@@ -245,7 +244,7 @@ export default {
       });
     },
     getxy(){
-      var _this = this;
+      let _this = this;
       axios.get('http://120.79.12.163/mgetxy?place='+_this.value_place+'&room='+_this.value_room)
       .then(function (response) {
         _this.x = response.data.x;
@@ -274,7 +273,7 @@ export default {
       else{
         this.ip_show = true;
       }
-      var _this = this;
+      let _this = this;
       axios.get('http://120.79.12.163/mgetplace?k='+_this.value_kind)
       .then(function (response) {
         _this.options_place = response.data.place;
@@ -303,7 +302,7 @@ export default {
     //显示GPS地图选择对话框
     handleGPS() {
       this.GPSmapVisible = true;
-      var _this = this;
+      let _this = this;
     },
     submitmap(){
       this.x = document.getElementById("ifmap").contentWindow.document.getElementById('lonlat').value;
@@ -314,11 +313,11 @@ export default {
 
     //提交整个新建签到域
     submitnewsign(){
-      var _this = this;
-      var start = _this.value_date_start +' ' + _this.value_time_start;
-      var end = _this.value_date_end +' '+ _this.value_time_end ;
+      let _this = this;
+      let start = _this.value_date_start +' ' + _this.value_time_start;
+      let end = _this.value_date_end +' '+ _this.value_time_end ;
       
-      var params = new URLSearchParams()
+      let params = new URLSearchParams()
       params.append('groupname',_this.value)
       params.append('isip_bssid',_this.value_ip)
       params.append('isqrcode',_this.value_ewm)
@@ -377,8 +376,8 @@ export default {
   },
   mounted(){
     //初始化swiper
-    var _this = this;
-    var mySwiper = new Swiper ('.swiper-container', {
+    let _this = this;
+    let mySwiper = new Swiper ('.swiper-container', {
       direction: 'horizontal',
       loop: false,
       speed:1000,
@@ -399,7 +398,7 @@ export default {
     //初始化签到域选择
       on:{
         slideChangeTransitionEnd:function(){
-          var swiperindex = this.activeIndex;
+          let swiperindex = this.activeIndex;
           _this.step_index = swiperindex-1;
         },
       },

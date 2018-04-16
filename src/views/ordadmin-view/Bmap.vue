@@ -19,12 +19,9 @@
 <script>
 import GeoUtils from '../../../static/js/GeoUtils.js'
 import BMap from 'BMap'
-
-
 export default {
     data () {
         return {
-
         }
     },
     methods: {
@@ -32,7 +29,6 @@ export default {
             var longitude=114.339972;
             var latitude=30.517935;
             var dis=50;
-
             var map = new BMap.Map("container",{enableMapClick:false});
             map.setDefaultCursor("crosshair");
             map.enableScrollWheelZoom();
@@ -45,13 +41,11 @@ export default {
             map.addOverlay(circle);
             map.addOverlay(marker);
             
-
             //初始化地址
             gc.getLocation(point,
             function(rs) {
                 showdetail(point, rs);
             });
-
             //地图点击事件
             map.addEventListener("click",
             function mapdraw(e,rs) {
@@ -79,7 +73,6 @@ export default {
             var lonlat = document.getElementById("lonlat");
             var lonlat2 = document.getElementById("lonlat2");
             var inputdis = document.getElementById("dis") 
-
             document.getElementById('search').onclick = function(point,rs){
                 longitude = lonlat.value;
                 latitude = lonlat2.value;
@@ -87,13 +80,11 @@ export default {
                 mapdraw(point,rs);
                 function mapdraw(point,rs) {
                     map.clearOverlays();
-
                     circle = new BMap.Circle(new BMap.Point(longitude,latitude),dis,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
                     point = new BMap.Point(longitude,latitude);
                     marker = new BMap.Marker(point);
                     map.addOverlay(marker);
                     map.addOverlay(circle);
-
                    //动态获取地址
                     gc.getLocation(point,
                     function(rs) {
@@ -101,7 +92,6 @@ export default {
                     });
                 }
             }
-
             //获取地址的函数
             function showdetail(pt, rs) {
                 var addComp = rs.addressComponents;

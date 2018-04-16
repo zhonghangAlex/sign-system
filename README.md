@@ -1,6 +1,6 @@
 # sign-system
 
-> this is a sign system
+> this is a sign system developed by Li Zhonghang
 
 ## Build Setup
 
@@ -23,5 +23,13 @@ npm run unit
 # run all tests
 npm test
 ```
+# 线上访问地址
+http://120.79.12.163
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+# 登录界面效果图
+![登录界面效果图](https://github.com/zhonghangAlex/sign-system/blob/master/static/img/login_cut.png)
+
+# 超管和普管效果图
+![超管效果图](https://github.com/zhonghangAlex/sign-system/blob/master/static/img/super_cut.png)
+![普管效果图](https://github.com/zhonghangAlex/sign-system/blob/master/static/img/ord_cut.png)
+![发布效果图](https://github.com/zhonghangAlex/sign-system/blob/master/static/img/new_sign.png)

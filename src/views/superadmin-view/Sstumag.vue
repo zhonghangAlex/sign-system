@@ -197,13 +197,11 @@
 
 <script>
 	import axios from 'axios'
-	import util from '../../common/util'
 	//import NProgress from 'nprogress'
 	export default {
 		data() {
 			return {
 				//文件上传
-				//fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
 				fileList: [],
 				limit:1,
 				uploadform:{
@@ -282,7 +280,7 @@
 			},
 			//excel下载
 			exceldownload(){
-				var _this = this;
+				let _this = this;
 				window.open("http://120.79.12.163/stumodel");
 			},
 			submitUpload() {
@@ -342,7 +340,7 @@
 			},
 			//获取用户列表
 			getUsers(x) {
-				var _this = this;
+				let _this = this;
 				this.listLoading = true;
 				if(x==1){
 					this.page = 1;
@@ -366,7 +364,7 @@
 			
 			//密码重置
 			handleresetpsd: function(index, row){
-				var _this = this;
+				let _this = this;
 				//和删除一样的ID 接口位置sturesetpsd
 				this.$confirm('确认要重置密码吗?', '提示', {
 					type: 'warning'
@@ -378,7 +376,7 @@
 						}
 					})
 					.then(function (response) {
-						var d = response.data;
+						let d = response.data;
 						
 						//NProgress.done();
 						if(d.status==1)
@@ -405,7 +403,7 @@
 			},
 			//删除
 			handleDel: function (index, row) {
-				var _this = this;
+				let _this = this;
 				this.$confirm('确认删除该记录吗?', '提示', {
 					type: 'warning'
 				}).then(() => {
@@ -416,7 +414,7 @@
 						}
 					})
 					.then(function (response) {
-						var d = response.data;
+						let d = response.data;
 						
 						//NProgress.done();
 						if(d.status==1)
@@ -468,17 +466,17 @@
 			},
 			//密码重置
 			resetpsdSubmit: function (){
-				var _this = this;
+				let _this = this;
 			},
 			//编辑
 			editSubmit: function () {
-				var _this = this;
+				let _this = this;
 				this.$refs.editForm.validate((valid) => {
 					if (valid) {
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
 							this.editLoading = true;
 							let para = Object.assign({}, this.editForm);
-							for(var i=0; i<para.signno.length; i++){
+							for(let i=0; i<para.signno.length; i++){
 								para.signno[i] ='\"'+para.signno[i]+'\"';
 							}
 							para.signno = '['+para.signno.toString()+']';
@@ -487,7 +485,7 @@
 							.then(function (response) {
 								console.log(response);
 								_this.editLoading = false;
-								var d=response.data
+								let d=response.data
 								if(d.status==1)
 								_this.$message({
 									message: d.message,
@@ -532,20 +530,20 @@
 
 			//新增
 			addSubmit: function () {
-				var _this = this;
+				let _this = this;
 				this.$refs.addForm.validate((valid) => {
 					if (valid) {
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
 							this.addLoading = true;
 							let para = Object.assign({}, this.addForm);
-							for(var i=0; i<para.signno.length; i++){
+							for(let i=0; i<para.signno.length; i++){
 								para.signno[i] ='\"'+para.signno[i]+'\"';
 							}
 							para.signno = '['+para.signno.toString()+']';
 							para.way = 1;
 							axios.get('http://120.79.12.163/stumodify',{params:para})
 							.then(function (response) {
-								var d = response.data;
+								let d = response.data;
 								_this.addLoading = false;
 								if(d.status==1)
 								_this.$message({
@@ -592,12 +590,10 @@
 				this.sels = sels;
 			},
 			
-			
-			
 			//批量删除
 			batchRemove: function () {
-				var _this = this;
-				var stuids = this.sels.map(item => '\"'+item.stuid+'\"').toString();
+				let _this = this;
+				let stuids = this.sels.map(item => '\"'+item.stuid+'\"').toString();
 				stuids = '['+stuids+']';
 				this.$confirm('确认删除选中记录吗？', '提示', {
 					type: 'warning'
@@ -605,7 +601,7 @@
 					let para = { stuid: stuids };
 					axios.get('http://120.79.12.163/studelete',{params:para})
 					.then(function (response) {
-						var d = response.data;
+						let d = response.data;
 						_this.listLoading = false;
 						if(d.status==1)
 						_this.$message({

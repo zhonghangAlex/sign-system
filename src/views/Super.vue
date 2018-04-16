@@ -94,14 +94,14 @@
 import axios from 'axios'
 export default {
   data() {
-    var validatePass0 = (rule, value, callback) => {
+    let validatePass0 = (rule, value, callback) => {
         if (value === '') {
             callback(new Error('请输入旧密码'));
         }else{
             callback();
         }
     };
-    var validatePass1 = (rule, value, callback) => {
+    let validatePass1 = (rule, value, callback) => {
         if (value === '') {
             callback(new Error('请输入新密码'));
         } else {
@@ -111,7 +111,7 @@ export default {
             callback();
         }
     };
-    var validatePass2 = (rule, value, callback) => {
+    let validatePass2 = (rule, value, callback) => {
         if (value === '') {
             callback(new Error('请再次输入新密码'));
         } else if (value !== this.psdFormRules.newPass) {
@@ -166,7 +166,7 @@ export default {
     },
     //退出登录
     logout: function() {
-        var _this = this;
+        let _this = this;
         this.$confirm("确认退出吗?", "提示", {
             //type: 'warning'
         })
@@ -191,18 +191,18 @@ export default {
         this.psdchangeVisible = true;
     },
     psdchangeSubmit(){
-        var _this = this;
+        let _this = this;
         this.$refs.psdFormRules.validate((valid) => {
             if(valid){
                 this.$confirm('确认修改密码吗?', '提示', {
                     type: 'warning'
                 }).then(() => {
-                    var params = new URLSearchParams()
+                    let params = new URLSearchParams()
                     params.append('oldpassword',_this.psdFormRules.oldPass)
                     params.append('newpassword',_this.psdFormRules.newPass)
                     axios.post('http://120.79.12.163/setpassword',params)
                     .then(function (response) {
-                        var d = response.data;
+                        let d = response.data;
                         if(d.status==1){
                             _this.$message({
                                 message: d.message,

@@ -111,7 +111,7 @@
 			<div slot="footer" class="dialog-footer">
 				<el-button type="primary"  v-on:click="handledetailimport" style="position:absolute;left:50px;" >Excel批量导入</el-button>
 				<el-button type="primary"  v-on:click="detailbatchRemove" >清空该签到域学生</el-button>
-				<el-button type="primary"  v-on:click="detailSubmit" >提交学生修改</el-button>
+				<el-button type="primary"  v-on:click="detailSubmit" :disabled="if_can_click" >提交学生修改</el-button>
 				<el-button @click.native="detailFormVisible = false">关闭界面</el-button>
 			</div>
 		</el-dialog>
@@ -137,7 +137,6 @@
 
 <script>
 	import axios from 'axios'
-	import util from '../../common/util'
 	export default {
 		data() {
 			return {
@@ -217,6 +216,8 @@
 				detailuploadform:{
 
 				},	
+				//搜索后提交死锁
+                if_can_click:false
 			}
 		},
 		methods: {
@@ -229,7 +230,7 @@
 				this.detailfileimportVisible = true;
 			},
 			detailexceldownload(){
-				var _this = this;
+				let _this = this;
 				window.open("http://120.79.12.163/detailareamodel");
 			},
 			detailsubmitUpload() {
@@ -268,13 +269,16 @@
 
 			//显示详情页面  同时发送并获取数据
 			handledetail: function(index, row, x){
-				var _this = this;
+				let _this = this;
 				this.detailFormVisible = true;
 				if(x==1){
-					this.detailclicksend.signno = row.signno;
-					this.detailclicksend.workid = row.workid;
+					_this.detailclicksend.signno = row.signno;
+					_this.detailclicksend.workid = row.workid;
 				}
-				var params = new URLSearchParams();
+				if(_this.detailfilters.search!=''){
+					_this.if_can_click = true;
+				}
+				let params = new URLSearchParams();
 				params.append('page',_this.detailpage);
 				params.append('pagesize',_this.detailpagesize);
 				params.append('search',_this.detailfilters.search);
@@ -309,9 +313,9 @@
 			},
 
 			handleInputConfirm() {
-				var _this = this;
+				let _this = this;
 				let inputValue = this.inputValue;
-				var arr = inputValue.split(" ");
+				let arr = inputValue.split(" ");
 				inputValue = {"stuid":arr[0],"name":arr[1]};
 				if(arr.length!=2){
 					_this.$message({
@@ -340,11 +344,11 @@
 			},
 			//提交学生详情的修改
 			detailSubmit: function () {
-				var _this = this;
+				let _this = this;
 				this.$confirm('确认提交修改后的学生信息吗？', '提示', {}).then(() => {
 					let para = Object.assign({}, _this.detailsignarea);
-					var tmp;
-					var tmpareaname = '';
+					let tmp;
+					let tmpareaname = '';
 					for(let i=0; i<para.studentsname.length; i++){
 						tmp = ','+'{'+'\"'+'stuid'+'\"'+':'+ '\"'+para.studentsname[i].stuid+'\"'+','+'\"'+'name'+'\"'+':'+ '\"'+para.studentsname[i].name+'\"'+'}';
 						tmpareaname = tmpareaname + tmp;
@@ -352,7 +356,7 @@
 					tmpareaname = tmpareaname.slice(1); 
 					para.studentsname = '['+tmpareaname+']';
 					console.log(para.studentsname);
-					var params = new URLSearchParams()
+					let params = new URLSearchParams()
 					params.append('signno',para.signno)
 					params.append('workid',para.workid)
 					params.append('studentsname',para.studentsname)
@@ -361,7 +365,7 @@
 						console.log(response);
 						_this.editLoading = false;
 						//NProgress.done();
-						var d=response.data
+						let d=response.data
 						if(d.status==1)
 						_this.$message({
 							message: d.message,
@@ -391,7 +395,7 @@
 			},
 			//excel下载
 			exceldownload(){
-				var _this = this;
+				let _this = this;
 				window.open("http://120.79.12.163/signareamodel");
 			},
 			submitUpload() {
@@ -451,7 +455,7 @@
 			},
 			//获取用户列表
 			getsignareas(x) {
-				var _this = this;
+				let _this = this;
 				this.listLoading = true;
 				if(x==1){
 					this.page = 1;
@@ -479,7 +483,7 @@
 			},
 			//删除
 			handleDel: function (index, row) {
-				var _this = this;
+				let _this = this;
 				this.$confirm('确认删除该记录吗?', '提示', {
 					type: 'warning'
 				}).then(() => {
@@ -491,7 +495,7 @@
 					})
 					.then(function (response) {
 						console.log(response);
-						var d = response.data;
+						let d = response.data;
 						
 						//NProgress.done();
 						if(d.status==1)
@@ -527,7 +531,7 @@
 
 			//新增
 			addSubmit: function () {
-				var _this = this;
+				let _this = this;
 				this.$refs.addForm.validate((valid) => {
 					if (valid) {
 						this.$confirm('确认提交吗？', '提示', {}).then(() => {
@@ -537,7 +541,7 @@
 							axios.get('http://120.79.12.163/signareamodify',{params:para})
 							.then(function (response) {
 								console.log(response);
-								var d = response.data;
+								let d = response.data;
 								_this.addLoading = false;
 								if(d.status==1)
 								_this.$message({
@@ -564,8 +568,8 @@
 			
 			//批量删除
 			batchRemove: function () {
-				var _this = this;
-				var signnos = this.sels.map(item => '\"'+item.signno+'\"').toString();
+				let _this = this;
+				let signnos = this.sels.map(item => '\"'+item.signno+'\"').toString();
 				signnos = '['+signnos+']';
 				this.$confirm('确认删除选中记录吗？', '提示', {
 					type: 'warning'
@@ -577,7 +581,7 @@
 					axios.get('http://120.79.12.163/signareadelete',{params:para})
 					.then(function (response) {
 						console.log(response);
-						var d = response.data;
+						let d = response.data;
 						_this.listLoading = false;
 						//NProgress.done();
 						if(d.status==1)

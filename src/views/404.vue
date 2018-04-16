@@ -16,7 +16,7 @@ export default {
     },
   methods:{
         hisback(){
-            var oCon = document.getElementById('container');
+            let oCon = document.getElementById('container');
             oCon.style.transform = 'rotate(-30deg) translateY( -450px )';
             function late(){
                 window.history.back();
